@@ -18,3 +18,4 @@ A platform for students to exchange skills and form study groups.
 * Authorization (Role-based access control)
 * Skill Exchange (Offer and Request Skills - CRUD)
 * Study Group Management (Create, Join, Update, Delete Groups)
+* User Profile Management (CRUD) 
