@@ -1,3 +1,5 @@
+// lib/features/profile/presentation/screens/profile_screen.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -38,26 +40,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // ── Avatar ──────────────────────────────────────────────
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 48,
-                    backgroundColor: const Color(0xFFE0C8BE),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/avatar_placeholder.png',
-                        width: 96,
-                        height: 96,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
-                          Icons.person,
-                          size: 56,
-                          color: AppColors.primary,
-                        ),
-                      ),
+              child: CircleAvatar(
+                radius: 48,
+                backgroundColor: const Color(0xFFE0C8BE),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/avatar_placeholder.png',
+                    width: 96,
+                    height: 96,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.person,
+                      size: 56,
+                      color: AppColors.primary,
                     ),
                   ),
-                ],
+                ),
               ),
             ),
 
@@ -130,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // ── Settings List ────────────────────────────────────────
+            // ── Settings Tiles ───────────────────────────────────────
             _buildSettingsTile(
               icon: Icons.logout,
               iconColor: AppColors.textPrimary,
@@ -155,6 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: AppColors.textSecondary,
               ),
               onTap: () {
+                // TODO: wire up with GoRouter
                 Navigator.pushNamed(context, '/change-password');
               },
             ),
@@ -184,10 +183,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Switch(
                     value: _notificationsEnabled,
-                    onChanged: (val) {
-                      setState(() => _notificationsEnabled = val);
-                    },
-                    activeColor: AppColors.primary,
+                    onChanged: (val) =>
+                        setState(() => _notificationsEnabled = val),
+                    activeThumbColor:
+                        Colors.white, // ✅ fixed deprecated activeColor
+                    activeTrackColor: AppColors.primary,
                   ),
                 ],
               ),
@@ -197,14 +197,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-
-      // ── Bottom Nav Bar ───────────────────────────────────────────────
       bottomNavigationBar: _buildBottomNav(selectedIndex: 3),
     );
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────
-
+  // ── Settings tile builder ────────────────────────────────────────────
   Widget _buildSettingsTile({
     required IconData icon,
     required String label,
@@ -231,13 +228,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(color: labelColor, fontSize: 15),
               ),
             ),
-            if (trailing != null) trailing,
+            trailing ?? const SizedBox.shrink(), // ✅ null-aware operator
           ],
         ),
       ),
     );
   }
 
+  // ── Dialogs ──────────────────────────────────────────────────────────
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -316,12 +314,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ── Bottom Nav ───────────────────────────────────────────────────────
   Widget _buildBottomNav({required int selectedIndex}) {
-    const items = [
-      {'icon': Icons.home_outlined, 'label': 'Home'},
-      {'icon': Icons.lightbulb_outline, 'label': 'Skills'},
-      {'icon': Icons.group_outlined, 'label': 'Groups'},
-      {'icon': Icons.person_outline, 'label': 'Profile'},
+    const labels = ['Home', 'Skills', 'Groups', 'Profile'];
+    const icons = [
+      Icons.home_outlined,
+      Icons.lightbulb_outline,
+      Icons.group_outlined,
+      Icons.person_outline,
     ];
 
     return BottomNavigationBar(
@@ -331,18 +331,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppColors.background,
       type: BottomNavigationBarType.fixed,
       elevation: 8,
-      onTap: (index) {
+      onTap: (_) {
         // TODO: wire up with GoRouter
-        // e.g. context.go(routes[index])
       },
-      items: items
-          .map(
-            (item) => BottomNavigationBarItem(
-              icon: Icon(item['icon'] as IconData),
-              label: item['label'] as String,
-            ),
-          )
-          .toList(),
+      items: List.generate(
+        labels.length,
+        (i) => BottomNavigationBarItem(icon: Icon(icons[i]), label: labels[i]),
+      ),
     );
   }
 }

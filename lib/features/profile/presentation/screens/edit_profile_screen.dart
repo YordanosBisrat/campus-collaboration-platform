@@ -1,3 +1,5 @@
+// lib/features/profile/presentation/screens/edit_profile_screen.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -40,7 +42,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (!mounted) return;
 
-    // Show success snackbar then pop
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Profile updated successfully'),
@@ -85,7 +86,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               const SizedBox(height: AppSizes.p16),
 
-              // ── Avatar with edit button ──────────────────────────
+              // ── Avatar with edit pencil ──────────────────────────
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -98,11 +99,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         width: 96,
                         height: 96,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
-                          Icons.person,
-                          size: 56,
-                          color: AppColors.primary,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.person,
+                              size: 56,
+                              color: AppColors.primary,
+                            ),
                       ),
                     ),
                   ),
@@ -163,7 +165,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Save Changes Button ──────────────────────────────
+              // ── Save / Loading ───────────────────────────────────
               _isSaving
                   ? const SizedBox(
                       height: 50,
@@ -193,7 +195,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _pickImage() {
-    // TODO: integrate image_picker package
+    // TODO: wire up with GoRouter
+    // integrate image_picker:
     // final picker = ImagePicker();
     // final picked = await picker.pickImage(source: ImageSource.gallery);
     // if (picked != null) setState(() => _avatarFile = File(picked.path));
