@@ -5,19 +5,27 @@ import '../constants/app_sizes.dart';
 class CustomTextField extends StatefulWidget {
   final String label;
   final String hintText;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
   final bool isPassword;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final TextInputType keyboardType;
+  final String? errorText;
+  final bool enabled;
+  final int maxLines;
 
   const CustomTextField({
     super.key,
     required this.label,
     required this.hintText,
-    required this.prefixIcon,
+    this.prefixIcon,
     this.isPassword = false,
     this.controller,
     this.validator,
+    this.keyboardType = TextInputType.text,
+    this.errorText,
+    this.enabled = true,
+    this.maxLines = 1,
   });
 
   @override
@@ -35,7 +43,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         Text(
           widget.label,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
             color: AppColors.textPrimary,
           ),
         ),
@@ -44,27 +53,25 @@ class _CustomTextFieldState extends State<CustomTextField> {
           controller: widget.controller,
           obscureText: widget.isPassword ? _obscureText : false,
           validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          enabled: widget.enabled,
+          maxLines: widget.isPassword ? 1 : widget.maxLines,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            prefixIcon: Icon(widget.prefixIcon, color: AppColors.primary),
+            errorText: widget.errorText,
+            prefixIcon: widget.prefixIcon != null
+                ? Icon(widget.prefixIcon, color: AppColors.textSecondary, size: 20)
+                : null,
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                       color: AppColors.textSecondary,
+                      size: 20,
                     ),
-                    onPressed: () =>
-                        setState(() => _obscureText = !_obscureText),
+                    onPressed: () => setState(() => _obscureText = !_obscureText),
                   )
                 : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
-            ),
           ),
         ),
         const SizedBox(height: AppSizes.p16),
