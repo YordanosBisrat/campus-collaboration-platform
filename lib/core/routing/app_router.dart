@@ -6,6 +6,7 @@ import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/skills/presentation/screens/skills_list_screen.dart';
 import '../../features/groups/presentation/screens/group_list_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/change_password_screen.dart';
 
 import '../../features/groups/presentation/screens/create_group_screen.dart';
 import '../../features/groups/presentation/screens/group_detail_screen.dart';
@@ -37,34 +38,34 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ProfileScreen(),
     ),
 
-
-
+    GoRoute(
+      path: '/change-password',
+      builder: (context, state) => const ChangePasswordScreen(),
+    ),
 
     // New routes to add inside routes for groups: [ ... ]:
-GoRoute(
-  path: '/groups/detail',
-  builder: (context, state) {
-    final group = state.extra as GroupModel;
-    return GroupDetailScreen(group: group);
-  },
-),
-GoRoute(
-  path: '/groups/my-groups',
-  builder: (context, state) => const MyGroupsScreen(),
-),
-GoRoute(
-  path: '/groups/create',
-  builder: (context, state) => const CreateGroupScreen(),
-),
-GoRoute(
-  path: '/groups/empty',
-  builder: (context, state) => const EmptyGroupsScreen(),
-),
-GoRoute(
-  path: '/groups/my-groups/empty',
-  builder: (context, state) => const EmptyMyGroupsScreen(),
-),
-
-
+    GoRoute(
+      path: '/groups/detail',
+      builder: (context, state) {
+        final group = state.extra as GroupModel;
+        return GroupDetailScreen(group: group);
+      },
+    ),
+    GoRoute(
+      path: '/groups/my-groups',
+      builder: (context, state) => const MyGroupsScreen(),
+    ),
+    GoRoute(
+      path: '/groups/create',
+      builder: (context, state) => const CreateGroupScreen(),
+    ),
+    GoRoute(
+      path: '/groups/empty',
+      builder: (context, state) => const EmptyGroupsScreen(),
+    ),
+    GoRoute(
+      path: '/groups/my-groups/empty',
+      builder: (context, state) => const EmptyMyGroupsScreen(),
+    ),
   ],
 );
