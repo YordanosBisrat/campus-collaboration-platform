@@ -20,25 +20,16 @@ import '../../features/skills/presentation/screens/my_skills_screen.dart';
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const LoginScreen(),
-    ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: '/signup',
-      builder: (context, state) => const SignupScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
     GoRoute(
       path: '/forgot',
       builder: (context, state) => const ForgotPasswordScreen(),
     ),
     GoRoute(
       path: '/skills',
-      builder: (context, state) => const SkillListScreen(),
+      builder: (context, state) => const SkillsListScreen(),
     ),
     GoRoute(
       path: '/skills/error',
