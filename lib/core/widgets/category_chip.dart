@@ -28,6 +28,10 @@ class CategoryChip extends StatelessWidget {
 
   (Color, Color) _getColors(String label) {
     switch (label.toLowerCase()) {
+      case 'skill':
+        return (AppColors.tagProgramming, AppColors.tagProgrammingText);
+      case 'group':
+        return (AppColors.tagDesign, AppColors.tagDesignText);
       case 'programming':
         return (AppColors.tagProgramming, AppColors.tagProgrammingText);
       case 'language':
