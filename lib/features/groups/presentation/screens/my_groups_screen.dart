@@ -7,7 +7,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../models/group_model.dart';
-import '../widgets/group_widgets.dart';
 
 class MyGroupsScreen extends StatelessWidget {
   const MyGroupsScreen({super.key});

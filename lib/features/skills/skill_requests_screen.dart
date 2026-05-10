@@ -80,7 +80,7 @@ class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
           : ListView.separated(
               padding: const EdgeInsets.all(AppSizes.p16),
               itemCount: _requests.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   const SizedBox(height: AppSizes.p8),
               itemBuilder: (context, index) {
                 final request = _requests[index];

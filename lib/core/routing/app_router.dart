@@ -4,10 +4,11 @@ import '../../features/home/home_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/skills/presentation/screens/skills_list_screen.dart';
+import '../../features/skills/presentation/screens/skills_error_screen.dart';
 import '../../features/groups/presentation/screens/group_list_screen.dart';
+import '../../features/groups/presentation/screens/groups_error_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/change_password_screen.dart';
-
 import '../../features/groups/presentation/screens/create_group_screen.dart';
 import '../../features/groups/presentation/screens/group_detail_screen.dart';
 import '../../features/groups/presentation/screens/my_groups_screen.dart';
@@ -18,32 +19,46 @@ import '../../features/groups/models/group_model.dart';
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
-    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignupScreen(),
+    ),
     GoRoute(
       path: '/forgot',
       builder: (context, state) => const ForgotPasswordScreen(),
     ),
     GoRoute(
       path: '/skills',
-      builder: (context, state) => const SkillsListScreen(),
+      builder: (context, state) => const SkillListScreen(),
+    ),
+    GoRoute(
+      path: '/skills/error',
+      builder: (context, state) => const SkillsErrorScreen(),
     ),
     GoRoute(
       path: '/groups',
       builder: (context, state) => const GroupListScreen(),
     ),
     GoRoute(
+      path: '/groups/error',
+      builder: (context, state) => const GroupsErrorScreen(),
+    ),
+    GoRoute(
       path: '/profile',
       builder: (context, state) => const ProfileScreen(),
     ),
-
     GoRoute(
       path: '/change-password',
       builder: (context, state) => const ChangePasswordScreen(),
     ),
-
-    // New routes to add inside routes for groups: [ ... ]:
     GoRoute(
       path: '/groups/detail',
       builder: (context, state) {

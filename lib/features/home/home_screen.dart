@@ -14,15 +14,16 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        centerTitle: false,
         titleSpacing: AppSizes.p16,
         title: const Text(
           'NU',
           style: TextStyle(
-            color: AppColors.primary,
+            color: Color(0xFFFF9A9E),
             fontFamily: 'HoltwoodOneSC',
             fontWeight: FontWeight.w400,
-            fontSize: 36,
-            letterSpacing: 0,
+            fontSize: 32,
+            letterSpacing: -0.5,
           ),
         ),
         actions: [
@@ -183,7 +184,7 @@ class HomeFeatureCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
