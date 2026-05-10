@@ -20,7 +20,13 @@ import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
 import '../../features/groups/models/group_model.dart';
 import '../../features/profile/presentation/screens/change_password_screen.dart';
-
+import '../../features/skills/presentation/screens/skill_detail_screen.dart';
+import '../../features/skills/presentation/screens/create_skill_screen.dart';
+import '../../features/skills/presentation/screens/my_skills_screen.dart';
+import '../../features/skills/presentation/screens/skill_requests_screen.dart';
+import '../../features/skills/presentation/screens/skills_error_screen.dart';
+import '../../features/skills/models/skill_model.dart';
+import '../../features/skills/presentation/screens/success_confirmation_screen.dart';
 // Shell (bottom nav wrapper)
 import 'main_shell.dart';
 
@@ -87,6 +93,33 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/change-password',
       builder: (context, state) => const ChangePasswordScreen(),
+    ),
+    GoRoute(
+      path: '/skills/detail',
+      builder: (context, state) {
+        final skill = state.extra as SkillModel;
+        return SkillDetailScreen(skill: skill);
+      },
+    ),
+    GoRoute(
+      path: '/skills/create',
+      builder: (context, state) => const CreateSkillScreen(),
+    ),
+    GoRoute(
+      path: '/skills/my-skills',
+      builder: (context, state) => const MySkillsScreen(),
+    ),
+    GoRoute(
+      path: '/skills/requests',
+      builder: (context, state) => const SkillRequestsScreen(),
+    ),
+    GoRoute(
+      path: '/skills/error',
+      builder: (context, state) => const SkillsErrorScreen(),
+    ),
+    GoRoute(
+      path: '/skills/success-confirmation',
+      builder: (context, state) => const SuccessConfirmationScreen(),
     ),
   ],
 );
