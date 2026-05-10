@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: AppColors.errorLight,
                       borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
                       border: Border.all(
-                        color: AppColors.error.withOpacity(0.3),
+                        color: AppColors.error.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(

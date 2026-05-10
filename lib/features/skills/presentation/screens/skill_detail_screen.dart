@@ -180,7 +180,3 @@ class SkillDetailScreen extends StatelessWidget {
     );
   }
 }
-
-extension on AppSizes {
-  static const double p20 = 20.0;
-}
