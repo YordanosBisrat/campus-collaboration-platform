@@ -1,5 +1,3 @@
-// lib/features/skills/models/skill_model.dart
-
 import 'package:flutter/material.dart';
 
 class SkillModel {

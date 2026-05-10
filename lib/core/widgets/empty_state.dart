@@ -24,7 +24,7 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // ── Error icon ───────────────────────────────
+            //  Error icon
             Container(
               width: 90,
               height: 90,
@@ -41,7 +41,7 @@ class ErrorState extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p24),
 
-            // ── Title ────────────────────────────────────
+            // Title
             Text(
               title,
               textAlign: TextAlign.center,
@@ -54,7 +54,7 @@ class ErrorState extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p8),
 
-            // ── Subtitle ─────────────────────────────────
+            // Subtitle
             Text(
               subtitle,
               textAlign: TextAlign.center,
@@ -67,13 +67,10 @@ class ErrorState extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p24),
 
-            // ── Retry button ─────────────────────────────
+            // Retry button
             SizedBox(
               width: 140,
-              child: CustomButton(
-                text: '↻  Retry',
-                onPressed: onRetry,
-              ),
+              child: CustomButton(text: '↻  Retry', onPressed: onRetry),
             ),
           ],
         ),

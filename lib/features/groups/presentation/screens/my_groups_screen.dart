@@ -1,6 +1,3 @@
-// lib/features/groups/presentation/screens/my_groups_screen.dart
-// Screen: My Groups — lists groups the current user has joined.
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -26,42 +23,45 @@ class MyGroupsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: AppColors.textPrimary),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.textPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'My Groups',
           style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 18),
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
       ),
 
-      // ── Body ─────────────────────────────────────────────────────────────
+      //  Body
       body: ListView.builder(
         padding: const EdgeInsets.fromLTRB(
-            AppSizes.p16, AppSizes.p8, AppSizes.p16, AppSizes.p24),
+          AppSizes.p16,
+          AppSizes.p8,
+          AppSizes.p16,
+          AppSizes.p24,
+        ),
         itemCount: groups.length,
-        itemBuilder: (context, index) =>
-            _MyGroupCard(group: groups[index]),
+        itemBuilder: (context, index) => _MyGroupCard(group: groups[index]),
       ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
 // My Group Card
-// ---------------------------------------------------------------------------
-
-/// Card with a filled primary "View Details" button — distinct from GroupListCard.
 class _MyGroupCard extends StatelessWidget {
   final GroupModel group;
   const _MyGroupCard({required this.group});
@@ -83,9 +83,10 @@ class _MyGroupCard extends StatelessWidget {
             Text(
               group.name,
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: AppColors.textPrimary),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: AppColors.textPrimary,
+              ),
             ),
 
             const SizedBox(height: AppSizes.p4),
@@ -93,13 +94,18 @@ class _MyGroupCard extends StatelessWidget {
             // Member count
             Row(
               children: [
-                Icon(Icons.group_outlined,
-                    size: 16, color: AppColors.textSecondary),
+                Icon(
+                  Icons.group_outlined,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
                 const SizedBox(width: AppSizes.p4),
                 Text(
                   '${group.memberCount} Members',
                   style: TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary),
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -112,8 +118,7 @@ class _MyGroupCard extends StatelessWidget {
             CustomButton(
               text: 'View Details',
               isPrimary: true,
-              onPressed: () =>
-                  context.push('/groups/detail', extra: group),
+              onPressed: () => context.push('/groups/detail', extra: group),
             ),
           ],
         ),
@@ -121,4 +126,3 @@ class _MyGroupCard extends StatelessWidget {
     );
   }
 }
-

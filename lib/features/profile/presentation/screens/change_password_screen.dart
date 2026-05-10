@@ -1,5 +1,3 @@
-// lib/features/profile/presentation/screens/change_password_screen.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/constants/app_sizes.dart';
@@ -86,7 +84,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             children: [
               const SizedBox(height: AppSizes.p16),
 
-              // ── Current Password ─────────────────────────────────
+              //  Current Password
               CustomTextField(
                 label: 'Current Password',
                 hintText: '••••••••••••',
@@ -103,7 +101,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── New Password ─────────────────────────────────────
+              //  New Password
               CustomTextField(
                 label: 'New Password',
                 hintText: 'CampusRules2023!',
@@ -123,7 +121,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Confirm New Password ─────────────────────────────
+              //  Confirm New Password
               CustomTextField(
                 label: 'Confirm New Password',
                 hintText: 'CampusRules2023!',
@@ -143,7 +141,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Update Password Button ───────────────────────────
+              //  Update Password Button
               _isSaving
                   ? const SizedBox(
                       height: 50,
@@ -160,7 +158,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Cancel ───────────────────────────────────────────
+              //  Cancel Button
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,

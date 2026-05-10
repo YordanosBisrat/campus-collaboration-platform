@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/skill_requests_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -14,7 +12,6 @@ class SkillRequestsScreen extends StatefulWidget {
 }
 
 class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
-  // Mock requests data matching Figma
   final List<Map<String, String>> _requests = [
     {'name': 'Solomon Elias', 'skill': 'Java Tutoring'},
     {'name': 'Christian Elias', 'skill': 'UI Design Basics'},
@@ -47,7 +44,7 @@ class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,

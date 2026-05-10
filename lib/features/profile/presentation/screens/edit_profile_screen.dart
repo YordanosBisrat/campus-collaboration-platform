@@ -1,5 +1,3 @@
-// lib/features/profile/presentation/screens/edit_profile_screen.dart
-
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -86,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               const SizedBox(height: AppSizes.p16),
 
-              // ── Avatar with edit pencil ──────────────────────────
+              //  Avatar with edit pencil
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -119,7 +117,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Full Name ────────────────────────────────────────
+              //  Full Name
               CustomTextField(
                 label: 'Full Name',
                 hintText: 'Enter your full name',
@@ -135,7 +133,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Email Address ────────────────────────────────────
+              //  Email Address
               CustomTextField(
                 label: 'Email Address',
                 hintText: 'your@university.edu',
@@ -154,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Save / Loading ───────────────────────────────────
+              //  Save / Loading
               _isSaving
                   ? const SizedBox(
                       height: 50,
@@ -168,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Cancel ───────────────────────────────────────────
+              //  Cancel Button
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,
@@ -184,11 +182,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _pickImage() {
-    // TODO: wire up with GoRouter
-    // integrate image_picker:
-    // final picker = ImagePicker();
-    // final picked = await picker.pickImage(source: ImageSource.gallery);
-    // if (picked != null) setState(() => _avatarFile = File(picked.path));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Image picker not wired yet'),

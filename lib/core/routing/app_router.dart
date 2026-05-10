@@ -12,7 +12,7 @@ import '../../features/skills/presentation/screens/skills_list_screen.dart';
 import '../../features/groups/presentation/screens/group_list_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 
-// Groups sub-screens
+// Groups and skills sub-screens
 import '../../features/groups/presentation/screens/create_group_screen.dart';
 import '../../features/groups/presentation/screens/group_detail_screen.dart';
 import '../../features/groups/presentation/screens/my_groups_screen.dart';
@@ -37,7 +37,7 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: [
-    // ── Auth routes (no bottom nav) ──────────────────────────────────
+    // Auth routes (no bottom nav)
     GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
     GoRoute(
@@ -45,7 +45,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ForgotPasswordScreen(),
     ),
 
-    // ── Shell: main tabs with bottom nav ─────────────────────────────
+    // Shell: main tabs with bottom nav
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) => MainShell(child: child),
@@ -66,7 +66,7 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
 
-    // ── Groups sub-screens (full screen, no bottom nav) ──────────────
+    // Groups and skills sub-screens
     GoRoute(
       path: '/groups/detail',
       builder: (context, state) {

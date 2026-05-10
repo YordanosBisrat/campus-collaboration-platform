@@ -1,8 +1,3 @@
-
-
-// lib/features/groups/presentation/screens/group_detail_screen.dart
-// Screen: Group Details — full info view for a single study group.
-
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -24,27 +19,34 @@ class GroupDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: AppColors.textPrimary),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.textPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Group Details',
           style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 18),
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.ios_share_outlined,
-                size: 22, color: AppColors.textPrimary),
+            icon: Icon(
+              Icons.ios_share_outlined,
+              size: 22,
+              color: AppColors.textPrimary,
+            ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Share link copied!')),
@@ -54,11 +56,15 @@ class GroupDetailScreen extends StatelessWidget {
         ],
       ),
 
-      // ── Sticky Join Button ────────────────────────────────────────────────
+      //  Sticky Join Button
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-              AppSizes.p16, AppSizes.p8, AppSizes.p16, AppSizes.p16),
+            AppSizes.p16,
+            AppSizes.p8,
+            AppSizes.p16,
+            AppSizes.p16,
+          ),
           child: CustomButton(
             text: 'Join Group',
             isPrimary: true,
@@ -74,7 +80,7 @@ class GroupDetailScreen extends StatelessWidget {
         ),
       ),
 
-      // ── Body ─────────────────────────────────────────────────────────────
+      //  Body
       body: ListView(
         padding: const EdgeInsets.all(AppSizes.p16),
         children: [
@@ -95,9 +101,7 @@ class GroupDetailScreen extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Group Info Card
-// ---------------------------------------------------------------------------
 
 class _GroupInfoCard extends StatelessWidget {
   final GroupModel group;
@@ -119,10 +123,11 @@ class _GroupInfoCard extends StatelessWidget {
             Text(
               group.name,
               style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                  height: 1.25),
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+                height: 1.25,
+              ),
             ),
 
             const SizedBox(height: AppSizes.p16),
@@ -140,15 +145,19 @@ class _GroupInfoCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.group_outlined,
-                      size: 16, color: AppColors.textSecondary),
+                  Icon(
+                    Icons.group_outlined,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     '${group.memberCount} Members',
                     style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -160,9 +169,10 @@ class _GroupInfoCard extends StatelessWidget {
             Text(
               group.description,
               style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                  height: 1.55),
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.55,
+              ),
             ),
           ],
         ),
@@ -171,10 +181,7 @@ class _GroupInfoCard extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Members Section Header
-// ---------------------------------------------------------------------------
-
 class _MembersSectionHeader extends StatelessWidget {
   final int count;
   const _MembersSectionHeader({required this.count});
@@ -186,14 +193,14 @@ class _MembersSectionHeader extends StatelessWidget {
         Text(
           'Members',
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(width: AppSizes.p8),
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(20),
@@ -201,9 +208,10 @@ class _MembersSectionHeader extends StatelessWidget {
           child: Text(
             '$count',
             style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary),
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
       ],
@@ -211,9 +219,7 @@ class _MembersSectionHeader extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Members List Card
-// ---------------------------------------------------------------------------
 
 class _MembersCard extends StatelessWidget {
   final List<GroupMember> members;
@@ -241,8 +247,3 @@ class _MembersCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

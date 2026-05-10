@@ -34,7 +34,6 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // TODO: Replace with real auth logic
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -56,7 +55,7 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 const SizedBox(height: AppSizes.p16),
 
-                // ── Back button ──────────────────────────────────────
+                //  Back button
                 GestureDetector(
                   onTap: () => context.pop(),
                   child: Container(
@@ -77,7 +76,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Heading ──────────────────────────────────────────
+                //  Heading
                 const Text(
                   'Create Account',
                   style: TextStyle(
@@ -97,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Full Name ────────────────────────────────────────
+                //  Full Name
                 CustomTextField(
                   label: 'Full Name',
                   hintText: 'e.g. Menal Abdulkadir',
@@ -111,7 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                // ── Email ────────────────────────────────────────────
+                //  Email
                 CustomTextField(
                   label: 'Email',
                   hintText: 'student@university.edu',
@@ -129,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                // ── Password ─────────────────────────────────────────
+                //  Password
                 CustomTextField(
                   label: 'Password',
                   hintText: '••••••••',
@@ -147,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                // ── Confirm Password ─────────────────────────────────
+                //  Confirm Password
                 CustomTextField(
                   label: 'Confirm Password',
                   hintText: '••••••••',
@@ -167,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 const SizedBox(height: AppSizes.p8),
 
-                // ── Sign Up button ───────────────────────────────────
+                //  Sign Up button
                 CustomButton(
                   text: 'Sign Up',
                   onPressed: _onSignUp,
@@ -176,7 +175,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 const SizedBox(height: AppSizes.p16),
 
-                // ── Login link ───────────────────────────────────────
+                //  Login link
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/my_skills_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,7 +13,6 @@ class MySkillsScreen extends StatefulWidget {
 }
 
 class _MySkillsScreenState extends State<MySkillsScreen> {
-  // Mock: user owns first 3 skills
   final List<SkillModel> _mySkills = SkillMockData.allSkills.take(3).toList();
 
   void _onDelete(SkillModel skill) {
@@ -64,7 +61,7 @@ class _MySkillsScreenState extends State<MySkillsScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -98,7 +95,7 @@ class _MySkillsScreenState extends State<MySkillsScreen> {
               },
             ),
 
-      // ── FAB ─────────────────────────────────────────────────────────────
+      //  FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/skills/create'),
         backgroundColor: AppColors.primary,
@@ -110,7 +107,7 @@ class _MySkillsScreenState extends State<MySkillsScreen> {
   }
 }
 
-// ── Empty My Skills State ─────────────────────────────────────────────────────
+//  Empty My Skills State
 
 class _EmptyMySkillsState extends StatelessWidget {
   @override

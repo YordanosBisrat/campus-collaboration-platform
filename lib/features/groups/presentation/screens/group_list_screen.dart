@@ -1,5 +1,3 @@
-// lib/features/groups/presentation/screens/group_list_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -51,7 +49,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -67,8 +65,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
         ),
       ),
 
-      // ── Body ─────────────────────────────────────────────────────────────
-      // ── NO bottomNavigationBar here — MainShell handles it ───────────────
+      //  Body
       body: Column(
         children: [
           // Search bar
@@ -146,7 +143,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
         ],
       ),
 
-      // ── FAB ──────────────────────────────────────────────────────────────
+      //  FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/groups/create'),
         backgroundColor: AppColors.primary,
@@ -158,10 +155,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Group List Card
-// ---------------------------------------------------------------------------
-
 class _GroupListCard extends StatelessWidget {
   final GroupModel group;
   const _GroupListCard({required this.group});

@@ -1,11 +1,9 @@
-// lib/features/skills/presentation/widgets/skill_widgets.dart
-
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../models/skill_model.dart';
 
-// ── Skill List Card ───────────────────────────────────────────────────────────
+//  Skill List Card
 
 class SkillListCard extends StatelessWidget {
   final SkillModel skill;
@@ -27,7 +25,7 @@ class SkillListCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -123,7 +121,7 @@ class SkillListCard extends StatelessWidget {
   }
 }
 
-// ── Category Chip ─────────────────────────────────────────────────────────────
+//  Category Chip
 
 class _CategoryChip extends StatelessWidget {
   final String label;
@@ -156,7 +154,7 @@ class _CategoryChip extends StatelessWidget {
   }
 }
 
-// ── My Skill Card (Edit/Delete) ───────────────────────────────────────────────
+//  My Skill Card (Edit/Delete)
 
 class MySkillCard extends StatelessWidget {
   final SkillModel skill;
@@ -180,7 +178,7 @@ class MySkillCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -258,7 +256,7 @@ class MySkillCard extends StatelessWidget {
   }
 }
 
-// ── Skill Request Card ────────────────────────────────────────────────────────
+//  Skill Request Card
 
 class SkillRequestCard extends StatelessWidget {
   final String requesterName;
@@ -284,7 +282,7 @@ class SkillRequestCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

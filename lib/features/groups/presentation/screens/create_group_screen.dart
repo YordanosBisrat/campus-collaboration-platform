@@ -1,6 +1,3 @@
-// lib/features/groups/presentation/screens/create_group_screen.dart
-// Screen: Create Group — form to create a new study group.
-
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -29,7 +26,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    // TODO: call repository / state management
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Group "${_nameCtrl.text}" created!'),
@@ -44,26 +40,30 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: AppColors.textPrimary),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.textPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Create Group',
           style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 18),
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
       ),
 
-      // ── Body ─────────────────────────────────────────────────────────────
+      //  Body
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.p16),
         child: Form(
@@ -73,7 +73,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             children: [
               const SizedBox(height: AppSizes.p8),
 
-              // ── Group Name ───────────────────────────────────────────────
+              //  Group Name
               _FieldLabel('Group Name'),
               const SizedBox(height: AppSizes.p8),
               _GroupFormField(
@@ -86,7 +86,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Topic ────────────────────────────────────────────────────
+              //  Topic
               _FieldLabel('Topic'),
               const SizedBox(height: AppSizes.p8),
               _GroupFormField(
@@ -99,7 +99,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Description ──────────────────────────────────────────────
+              //  Description
               _FieldLabel('Description'),
               const SizedBox(height: AppSizes.p8),
               _GroupFormField(
@@ -115,7 +115,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Create button ────────────────────────────────────────────
+              //  Create button
               CustomButton(
                 text: 'Create Group',
                 isPrimary: true,
@@ -124,14 +124,16 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Cancel ───────────────────────────────────────────────────
+              //  Cancel
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     'Cancel',
                     style: TextStyle(
-                        fontSize: 15, color: AppColors.textSecondary),
+                      fontSize: 15,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ),
@@ -143,9 +145,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Field Label
-// ---------------------------------------------------------------------------
 
 class _FieldLabel extends StatelessWidget {
   final String text;
@@ -156,20 +156,15 @@ class _FieldLabel extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-          color: AppColors.textPrimary),
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        color: AppColors.textPrimary,
+      ),
     );
   }
 }
 
-// ---------------------------------------------------------------------------
 // Form Field
-// ---------------------------------------------------------------------------
-
-/// Plain TextFormField styled to match the Figma Create Group form.
-/// Note: CustomTextField requires a prefixIcon which the Figma design doesn't
-/// have here, so we use TextFormField directly with matching styling.
 class _GroupFormField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
@@ -199,7 +194,9 @@ class _GroupFormField extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.p16, vertical: AppSizes.p16),
+          horizontal: AppSizes.p16,
+          vertical: AppSizes.p16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -224,5 +221,3 @@ class _GroupFormField extends StatelessWidget {
     );
   }
 }
-
-

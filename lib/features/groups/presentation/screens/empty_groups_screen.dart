@@ -1,6 +1,3 @@
-// lib/features/groups/presentation/screens/empty_groups_screen.dart
-// Screen: Empty Groups — shown when no study groups exist in the system yet.
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,26 +12,30 @@ class EmptyGroupsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: AppColors.textPrimary),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.textPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Study Groups',
           style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 18),
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
       ),
 
-      // ── Body ─────────────────────────────────────────────────────────────
+      //  Body
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -61,9 +62,10 @@ class EmptyGroupsScreen extends StatelessWidget {
               Text(
                 'No groups available yet',
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
                 textAlign: TextAlign.center,
               ),
 
@@ -72,9 +74,10 @@ class EmptyGroupsScreen extends StatelessWidget {
               Text(
                 'Create or join a study group to get started',
                 style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                    height: 1.5),
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
                 textAlign: TextAlign.center,
               ),
 
@@ -92,5 +95,3 @@ class EmptyGroupsScreen extends StatelessWidget {
     );
   }
 }
-
-

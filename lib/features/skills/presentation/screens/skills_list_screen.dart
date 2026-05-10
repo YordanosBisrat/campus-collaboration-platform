@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/skills_list_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -40,7 +38,7 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -62,10 +60,9 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
         ],
       ),
 
-      // ── NO bottomNavigationBar — MainShell handles it ────────────────────
       body: Column(
         children: [
-          // ── Search Bar ───────────────────────────────────────────────────
+          //  Search Bar
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.p16,
@@ -104,7 +101,7 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
             ),
           ),
 
-          // ── Skills List ──────────────────────────────────────────────────
+          //  Skills List
           Expanded(
             child: _filteredSkills.isEmpty
                 ? _EmptySkillsState()
@@ -127,7 +124,7 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
         ],
       ),
 
-      // ── FAB ─────────────────────────────────────────────────────────────
+      //  FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/skills/create'),
         backgroundColor: AppColors.primary,
@@ -139,7 +136,7 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
   }
 }
 
-// ── Empty State ───────────────────────────────────────────────────────────────
+//  Empty State
 
 class _EmptySkillsState extends StatelessWidget {
   @override

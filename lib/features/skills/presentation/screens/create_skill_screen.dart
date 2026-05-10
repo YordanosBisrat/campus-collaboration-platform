@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/create_skill_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -49,7 +47,6 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Replace with real create logic
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -62,7 +59,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -90,7 +87,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
             children: [
               const SizedBox(height: AppSizes.p8),
 
-              // ── Skill Title ──────────────────────────────────────────
+              //  Skill Title
               CustomTextField(
                 label: 'Skill Title',
                 hintText: 'e.g. Intro to Python Programming',
@@ -103,7 +100,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                 },
               ),
 
-              // ── Category Dropdown ────────────────────────────────────
+              //  Category Dropdown
               const Text(
                 'Category',
                 style: TextStyle(
@@ -163,7 +160,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              // ── Description ──────────────────────────────────────────
+              //  Description
               CustomTextField(
                 label: 'Description',
                 hintText:
@@ -180,7 +177,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Post Skill button ────────────────────────────────────
+              //  Post Skill button
               CustomButton(
                 text: 'Post Skill',
                 onPressed: _onPostSkill,
@@ -189,7 +186,7 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
 
               const SizedBox(height: AppSizes.p12),
 
-              // ── Cancel ───────────────────────────────────────────────
+              //  Cancel
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,

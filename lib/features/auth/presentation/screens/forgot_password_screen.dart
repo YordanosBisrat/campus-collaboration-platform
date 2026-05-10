@@ -25,11 +25,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _onSendResetLink() {
     final email = _emailController.text.trim();
-    if (email.isEmpty) return;
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your email address.')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
-    // TODO: Replace with real reset logic
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() {
@@ -68,7 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             children: [
               const SizedBox(height: AppSizes.p32),
 
-              // ── Lock / success icon ──────────────────────────────
+              //  Lock / success icon
               Container(
                 width: 80,
                 height: 80,
@@ -87,7 +91,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Description ──────────────────────────────────────
+              //  Description
               Text(
                 _emailSent
                     ? 'Reset link sent!'
@@ -102,7 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: AppSizes.p32),
 
               if (!_emailSent) ...[
-                // ── Email field ──────────────────────────────────────
+                //  Email field
                 CustomTextField(
                   label: 'Email Address',
                   hintText: 'student@university.edu',
@@ -113,7 +117,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                 const SizedBox(height: AppSizes.p8),
 
-                // ── Send Reset Link button ───────────────────────────
+                //  Send Reset Link button
                 CustomButton(
                   text: 'Send Reset Link',
                   onPressed: _onSendResetLink,
@@ -122,7 +126,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Back to Login ────────────────────────────────────
+                //  Back to Login
                 GestureDetector(
                   onTap: () => context.pop(),
                   child: Row(
@@ -146,7 +150,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
               ] else ...[
-                // ── Success message ──────────────────────────────────
+                //  Success message
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSizes.p16),

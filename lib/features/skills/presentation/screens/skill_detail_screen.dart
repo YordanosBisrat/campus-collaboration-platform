@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/skill_detail_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -17,7 +15,7 @@ class SkillDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ── App Bar ──────────────────────────────────────────────────────────
+      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.cardBackground,
         elevation: 0.5,
@@ -43,7 +41,7 @@ class SkillDetailScreen extends StatelessWidget {
           children: [
             const SizedBox(height: AppSizes.p8),
 
-            // ── Title ────────────────────────────────────────────────────
+            //  Title
             Text(
               skill.title,
               style: const TextStyle(
@@ -55,7 +53,7 @@ class SkillDetailScreen extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p16),
 
-            // ── Owner card ───────────────────────────────────────────────
+            //  Owner card
             GestureDetector(
               onTap: () {},
               child: Row(
@@ -104,7 +102,7 @@ class SkillDetailScreen extends StatelessWidget {
             const Divider(color: AppColors.divider),
             const SizedBox(height: AppSizes.p16),
 
-            // ── Description ──────────────────────────────────────────────
+            //  Description
             const Text(
               'Description',
               style: TextStyle(
@@ -167,7 +165,7 @@ class SkillDetailScreen extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p32),
 
-            // ── Request Skill button ─────────────────────────────────────
+            //  Request Skill button
             CustomButton(
               text: 'Request Skill',
               onPressed: () {
@@ -183,7 +181,6 @@ class SkillDetailScreen extends StatelessWidget {
   }
 }
 
-// Needed for AppSizes.p20 if not defined — safe fallback
 extension on AppSizes {
   static const double p20 = 20.0;
 }

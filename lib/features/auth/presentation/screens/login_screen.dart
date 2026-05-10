@@ -60,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Replace with real auth logic
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -82,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: AppSizes.p32),
 
-                // ── NU Logo ──────────────────────────────────────────
+                //  NU Logo
                 const Text(
                   'NU',
                   style: TextStyle(
@@ -96,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Heading (centered) ───────────────────────────────
+                //  Heading (centered)
                 const Text(
                   'Welcome Back',
                   textAlign: TextAlign.center,
@@ -118,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Error banner ─────────────────────────────────────
+                //  Error banner
                 if (_hasSubmissionError)
                   Container(
                     width: double.infinity,
@@ -153,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                // ── Email / Username ─────────────────────────────────
+                //  Email / Username
                 Align(
                   alignment: Alignment.centerLeft,
                   child: CustomTextField(
@@ -166,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                // ── Password ─────────────────────────────────────────
+                //  Password
                 Align(
                   alignment: Alignment.centerLeft,
                   child: CustomTextField(
@@ -179,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                // ── Forgot Password ──────────────────────────────────
+                //  Forgot Password
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
@@ -197,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Login button ─────────────────────────────────────
+                //  Login button
                 CustomButton(
                   text: 'Login',
                   onPressed: _onLogin,
@@ -206,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p16),
 
-                // ── Sign up link ─────────────────────────────────────
+                //  Sign up link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

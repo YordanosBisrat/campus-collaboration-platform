@@ -1,5 +1,3 @@
-// lib/features/profile/presentation/screens/profile_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -37,13 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
 
-      // ── NO bottomNavigationBar here — MainShell handles it ───────────────
+      //  NO bottomNavigationBar here — MainShell handles it
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: AppSizes.p16),
 
-            // ── Avatar ───────────────────────────────────────────────
+            //  Avatar
             Center(
               child: CircleAvatar(
                 radius: 48,
@@ -66,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: AppSizes.p16),
 
-            // ── Name & Email ─────────────────────────────────────────
+            //  Name & Email
             const Text(
               'Nathnael Worku',
               style: TextStyle(
@@ -82,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 8),
 
-            // ── Bio ──────────────────────────────────────────────────
+            //  Bio
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSizes.p24),
               child: Text(
@@ -98,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: AppSizes.p24),
 
-            // ── Edit Profile Button ──────────────────────────────────
+            //  Edit Profile Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
               child: CustomButton(
@@ -116,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: AppSizes.p24),
 
-            // ── Account Settings Label ───────────────────────────────
+            //  Account Settings Label
             const Padding(
               padding: EdgeInsets.only(left: AppSizes.p16, bottom: AppSizes.p8),
               child: Align(
@@ -132,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // ── Logout ───────────────────────────────────────────────
+            //  Logout
             _buildSettingsTile(
               icon: Icons.logout,
               iconColor: AppColors.textPrimary,
@@ -145,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
 
-            // ── Delete Account ───────────────────────────────────────
+            //  Delete Account
             _buildSettingsTile(
               icon: Icons.delete_outline,
               iconColor: AppColors.error,
@@ -154,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: _showDeleteAccountDialog,
             ),
 
-            // ── Change Password ──────────────────────────────────────
+            //  Change Password
             _buildSettingsTile(
               icon: Icons.lock_outline,
               iconColor: AppColors.textPrimary,
@@ -166,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () => context.push('/change-password'),
             ),
 
-            // ── Notifications Toggle ─────────────────────────────────
+            //  Notifications Toggle
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.p16,

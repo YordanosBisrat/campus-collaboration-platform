@@ -43,7 +43,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      // ── NO bottomNavigationBar here — MainShell handles it ───────────
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.p16,
@@ -52,7 +51,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Greeting ──────────────────────────────────────
+            //  Greeting
             RichText(
               text: const TextSpan(
                 children: [
@@ -76,7 +75,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p24),
 
-            // ── Skill Exchange Card ────────────────────────────
+            //  Skill Exchange Card
             HomeFeatureCard(
               icon: Icons.menu_book_outlined,
               iconBgColor: AppColors.primaryLight,
@@ -90,7 +89,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p16),
 
-            // ── Study Groups Card ──────────────────────────────
+            //  Study Groups Card
             HomeFeatureCard(
               icon: Icons.group_outlined,
               iconBgColor: const Color(0xFFE0F7F4),
@@ -104,7 +103,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p24),
 
-            // ── Recent Activity ────────────────────────────────
+            //  Recent Activity
             const Text(
               'Recent Activity',
               style: TextStyle(
@@ -136,7 +135,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// ── Feature Card Widget ───────────────────────────────────────────────────────
+//  Feature Card Widget  ───────────────────────────────────────────────────────
 
 class HomeFeatureCard extends StatelessWidget {
   final IconData icon;
@@ -246,7 +245,7 @@ class HomeFeatureCard extends StatelessWidget {
   }
 }
 
-// ── Activity Item Widget ──────────────────────────────────────────────────────
+//  Activity Item Widget  ──────────────────────────────────────────────────────
 
 class HomeActivityItem extends StatelessWidget {
   final IconData icon;

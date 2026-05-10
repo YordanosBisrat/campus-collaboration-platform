@@ -7,10 +7,7 @@ import '../../../../core/widgets/category_chip.dart';
 class SearchResultsScreen extends StatefulWidget {
   final String initialQuery;
 
-  const SearchResultsScreen({
-    super.key,
-    this.initialQuery = '',
-  });
+  const SearchResultsScreen({super.key, this.initialQuery = ''});
 
   @override
   State<SearchResultsScreen> createState() => _SearchResultsScreenState();
@@ -100,7 +97,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Filter Chips ───────────────────────────────────
+          //  Filter Chips
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.p16,
@@ -122,8 +119,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         color: isSelected
                             ? AppColors.primary
                             : AppColors.cardBackground,
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusLarge),
+                        borderRadius: BorderRadius.circular(
+                          AppSizes.radiusLarge,
+                        ),
                         border: Border.all(
                           color: isSelected
                               ? AppColors.primary
@@ -149,7 +147,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             ),
           ),
 
-          // ── Results Count ──────────────────────────────────
+          //  Results Count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
             child: Text(
@@ -163,7 +161,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
           const SizedBox(height: AppSizes.p8),
 
-          // ── Results List ───────────────────────────────────
+          //  Results List
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(
@@ -171,8 +169,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 vertical: AppSizes.p8,
               ),
               itemCount: _filteredResults.length,
-              separatorBuilder: (_, _) =>
-                  const SizedBox(height: AppSizes.p8),
+              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.p8),
               itemBuilder: (context, index) {
                 final item = _filteredResults[index];
                 return SearchResultItem(
@@ -188,15 +185,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: 0,
-        onTap: (index) {},
-      ),
+      bottomNavigationBar: AppBottomNav(currentIndex: 0, onTap: (index) {}),
     );
   }
 }
 
-// ── Search Bar ────────────────────────────────────────────────────────────────
+//  Search Bar
 
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -214,16 +208,10 @@ class _SearchBar extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(
-          fontSize: 14,
-          color: AppColors.textPrimary,
-        ),
+        style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
         decoration: const InputDecoration(
           hintText: 'Search skills or groups...',
-          hintStyle: TextStyle(
-            color: AppColors.textHint,
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
           prefixIcon: Icon(
             Icons.search,
             color: AppColors.textSecondary,
@@ -239,7 +227,7 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-// ── Search Result Item ────────────────────────────────────────────────────────
+//  Search Result Item
 
 class SearchResultItem extends StatelessWidget {
   final String title;
@@ -322,18 +310,12 @@ class SearchResultItem extends StatelessWidget {
                 const CircleAvatar(
                   radius: 14,
                   backgroundColor: AppColors.primaryLight,
-                  child: Icon(
-                    Icons.person,
-                    size: 14,
-                    color: AppColors.primary,
-                  ),
+                  child: Icon(Icons.person, size: 14, color: AppColors.primary),
                 ),
                 const SizedBox(width: AppSizes.p8),
                 Expanded(
                   child: Text(
-                    isSkill
-                        ? (person ?? '')
-                        : '${members ?? 0} members',
+                    isSkill ? (person ?? '') : '${members ?? 0} members',
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 13,

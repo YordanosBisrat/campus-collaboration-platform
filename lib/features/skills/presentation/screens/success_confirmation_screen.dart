@@ -1,6 +1,3 @@
-// lib/features/skills/presentation/screens/success_confirmation_screen.dart
-// Also used from: lib/core/widgets/success_confirmation_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../../core/theme/app_colors.dart';
@@ -23,7 +20,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
             children: [
               const Spacer(),
 
-              // ── Success icon ─────────────────────────────────────────
+              //  Success icon
               Container(
                 width: 100,
                 height: 100,
@@ -40,7 +37,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
 
               const SizedBox(height: AppSizes.p24),
 
-              // ── Title ────────────────────────────────────────────────
+              //  Title
               const Text(
                 'Your request has been\nsent successfully',
                 textAlign: TextAlign.center,
@@ -54,7 +51,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
 
               const SizedBox(height: AppSizes.p12),
 
-              // ── Subtitle ─────────────────────────────────────────────
+              //  Subtitle
               const Text(
                 'The user will contact you soon to\ncoordinate further details.',
                 textAlign: TextAlign.center,
@@ -67,7 +64,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // ── Go Back to Home button ───────────────────────────────
+              //  Go Back to Home button
               CustomButton(
                 text: 'Go Back to Home',
                 onPressed: () => context.go('/home'),

@@ -1,5 +1,3 @@
-// lib/features/skills/presentation/screens/skills_error_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -38,7 +36,6 @@ class SkillsErrorScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Wifi off icon matching Figma error state
               const Icon(
                 Icons.wifi_off_rounded,
                 size: 64,
