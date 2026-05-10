@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
@@ -28,7 +29,9 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: AppSizes.p16),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                // Navigate to profile or show menu
+              },
               child: const CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryLight,
@@ -77,7 +80,6 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-
             const SizedBox(height: AppSizes.p24),
 
             // ── Skill Exchange Card ────────────────────────────
@@ -90,9 +92,8 @@ class HomeScreen extends StatelessWidget {
                   'Learn new skills or share your expertise with peers across the campus.',
               buttonText: 'View Skills  →',
               isTextButton: false,
-              onPressed: () {},
+              onPressed: () => context.push('/skills'),
             ),
-
             const SizedBox(height: AppSizes.p16),
 
             // ── Study Groups Card ──────────────────────────────
@@ -105,9 +106,8 @@ class HomeScreen extends StatelessWidget {
                   'Find or create study groups for your courses and collaborate effectively.',
               buttonText: 'View Groups  →',
               isTextButton: true,
-              onPressed: () {},
+              onPressed: () => context.push('/groups'),
             ),
-
             const SizedBox(height: AppSizes.p24),
 
             // ── Recent Activity ────────────────────────────────
@@ -120,7 +120,6 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSizes.p16),
-
             const HomeActivityItem(
               icon: Icons.chat_bubble_outline_rounded,
               iconBgColor: Color(0xFFE3F0FF),
@@ -128,9 +127,7 @@ class HomeScreen extends StatelessWidget {
               title: 'New message in CS 101 Group',
               subtitle: '2 hours ago',
             ),
-
             const SizedBox(height: AppSizes.p8),
-
             const HomeActivityItem(
               icon: Icons.sync_alt_rounded,
               iconBgColor: Color(0xFFE8F5E9),
@@ -143,13 +140,16 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: AppBottomNav(
         currentIndex: 0,
-        onTap: (index) {},
+        onTap: (index) {
+          final routes = ['/home', '/skills', '/groups', '/profile'];
+          context.go(routes[index]);
+        },
       ),
     );
   }
 }
 
-// ── Feature Card ──────────────────────────────────────────────────────────────
+// ── Feature Card Widget ───────────────────────────────────────────────────────
 
 class HomeFeatureCard extends StatelessWidget {
   final IconData icon;
@@ -183,7 +183,7 @@ class HomeFeatureCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -192,7 +192,6 @@ class HomeFeatureCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon + Title row
           Row(
             children: [
               Container(
@@ -216,8 +215,6 @@ class HomeFeatureCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSizes.p12),
-
-          // Description
           Text(
             description,
             style: const TextStyle(
@@ -227,8 +224,6 @@ class HomeFeatureCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSizes.p16),
-
-          // Button
           isTextButton
               ? SizedBox(
                   width: double.infinity,
@@ -248,7 +243,6 @@ class HomeFeatureCard extends StatelessWidget {
                     child: Text(
                       buttonText,
                       style: const TextStyle(
-                        color: AppColors.primary,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -266,7 +260,7 @@ class HomeFeatureCard extends StatelessWidget {
   }
 }
 
-// ── Activity Item ─────────────────────────────────────────────────────────────
+// ── Activity Item Widget ──────────────────────────────────────────────────────
 
 class HomeActivityItem extends StatelessWidget {
   final IconData icon;
