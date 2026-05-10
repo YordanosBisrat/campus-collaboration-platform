@@ -93,19 +93,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   CircleAvatar(
                     radius: 48,
                     backgroundColor: const Color(0xFFE0C8BE),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/avatar_placeholder.png',
-                        width: 96,
-                        height: 96,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
-                              Icons.person,
-                              size: 56,
-                              color: AppColors.primary,
-                            ),
-                      ),
+                    backgroundImage: const AssetImage(
+                      'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
                     ),
                   ),
                   GestureDetector(

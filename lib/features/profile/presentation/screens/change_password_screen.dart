@@ -1,10 +1,10 @@
 // lib/features/profile/presentation/screens/change_password_screen.dart
 
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/constants/app_sizes.dart';
+import '../../../../../../core/widgets/custom_button.dart';
+import '../../../../../../core/widgets/custom_text_field.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

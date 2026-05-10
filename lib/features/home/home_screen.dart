@@ -36,9 +36,8 @@ class HomeScreen extends StatelessWidget {
               child: const CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryLight,
-                child: Text(
-                  '🧑',
-                  style: TextStyle(fontSize: 18),
+                backgroundImage: AssetImage(
+                  'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
                 ),
               ),
             ),

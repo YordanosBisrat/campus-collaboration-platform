@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/constants/app_sizes.dart';
+import '../../../../../../core/widgets/app_bottom_nav.dart';
 
 class SkillRequestsScreen extends StatefulWidget {
   const SkillRequestsScreen({super.key});

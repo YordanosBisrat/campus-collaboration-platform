@@ -8,7 +8,7 @@ import '../../features/skills/presentation/screens/skills_error_screen.dart';
 import '../../features/groups/presentation/screens/group_list_screen.dart';
 import '../../features/groups/presentation/screens/groups_error_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
-import '../../features/profile/change_password_screen.dart';
+import '../../features/profile/presentation/screens/change_password_screen.dart';
 import '../../features/groups/presentation/screens/create_group_screen.dart';
 import '../../features/groups/presentation/screens/group_detail_screen.dart';
 import '../../features/groups/presentation/screens/my_groups_screen.dart';

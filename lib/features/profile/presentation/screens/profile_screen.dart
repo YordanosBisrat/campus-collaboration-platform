@@ -47,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: const Color(0xFFE0C8BE),
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/avatar_placeholder.png',
+                    'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
                     width: 96,
                     height: 96,
                     fit: BoxFit.cover,
