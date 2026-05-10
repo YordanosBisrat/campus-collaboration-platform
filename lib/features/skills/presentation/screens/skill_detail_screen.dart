@@ -1,6 +1,7 @@
 // lib/features/skills/presentation/screens/skill_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -15,14 +16,16 @@ class SkillDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+
+      // ── App Bar ──────────────────────────────────────────────────────────
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
+        backgroundColor: AppColors.cardBackground,
+        elevation: 0.5,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
-        centerTitle: true,
         title: const Text(
           'Skill Details',
           style: TextStyle(
@@ -32,194 +35,155 @@ class SkillDetailScreen extends StatelessWidget {
           ),
         ),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.p16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Title ────────────────────────────────────────────────
+            const SizedBox(height: AppSizes.p8),
+
+            // ── Title ────────────────────────────────────────────────────
             Text(
               skill.title,
               style: const TextStyle(
-                color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
+                color: AppColors.textPrimary,
               ),
             ),
 
-            const SizedBox(height: AppSizes.p12),
+            const SizedBox(height: AppSizes.p16),
 
-            // ── Owner Row ────────────────────────────────────────────
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Color(0xFFE0C8BE),
-                  child: Icon(Icons.person, color: AppColors.primary, size: 20),
-                ),
-                const SizedBox(width: AppSizes.p8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      skill.ownerName,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+            // ── Owner card ───────────────────────────────────────────────
+            GestureDetector(
+              onTap: () {},
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 20,
+                    backgroundColor: AppColors.primaryLight,
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                      color: AppColors.primary,
                     ),
-                    Text(
-                      skill.ownerYear,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                      ),
+                  ),
+                  const SizedBox(width: AppSizes.p12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          skill.ownerName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          skill.ownerYear,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const Spacer(),
-                const Icon(Icons.chevron_right, color: AppColors.textSecondary),
-              ],
+                  ),
+                  const Icon(
+                    Icons.chevron_right,
+                    color: AppColors.textSecondary,
+                  ),
+                ],
+              ),
             ),
 
-            const SizedBox(height: AppSizes.p16),
-            const Divider(color: Color(0xFFEEEEEE)),
+            const SizedBox(height: AppSizes.p24),
+            const Divider(color: AppColors.divider),
             const SizedBox(height: AppSizes.p16),
 
-            // ── Description ──────────────────────────────────────────
+            // ── Description ──────────────────────────────────────────────
             const Text(
               'Description',
               style: TextStyle(
-                color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: AppSizes.p8),
             Text(
               skill.description,
               style: const TextStyle(
-                color: AppColors.textSecondary,
                 fontSize: 14,
+                color: AppColors.textSecondary,
                 height: 1.6,
               ),
             ),
 
-            const SizedBox(height: AppSizes.p16),
-
-            // ── Availability ─────────────────────────────────────────
-            if (skill.availability != null) ...[
+            if (skill.availability.isNotEmpty) ...[
+              const SizedBox(height: AppSizes.p24),
               const Text(
                 'Availability:',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 15,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: AppSizes.p4),
               Text(
-                skill.availability!,
+                skill.availability,
                 style: const TextStyle(
-                  color: AppColors.textSecondary,
                   fontSize: 14,
-                  height: 1.5,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
                 ),
               ),
-              const SizedBox(height: AppSizes.p16),
             ],
 
-            // ── Prerequisites ────────────────────────────────────────
-            if (skill.prerequisites != null) ...[
+            if (skill.prerequisites.isNotEmpty) ...[
+              const SizedBox(height: AppSizes.p16),
               const Text(
                 'Prerequisites:',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 15,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: AppSizes.p4),
               Text(
-                skill.prerequisites!,
+                skill.prerequisites,
                 style: const TextStyle(
-                  color: AppColors.textSecondary,
                   fontSize: 14,
-                  height: 1.5,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
                 ),
               ),
-              const SizedBox(height: AppSizes.p24),
-            ] else
-              const SizedBox(height: AppSizes.p24),
+            ],
 
-            // ── Request Skill Button ─────────────────────────────────
+            const SizedBox(height: AppSizes.p32),
+
+            // ── Request Skill button ─────────────────────────────────────
             CustomButton(
               text: 'Request Skill',
               onPressed: () {
-                _showSuccessDialog(context);
+                context.push('/skills/success-confirmation');
               },
             ),
 
-            const SizedBox(height: AppSizes.p24),
+            const SizedBox(height: AppSizes.p16),
           ],
         ),
       ),
     );
   }
+}
 
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: AppSizes.p16),
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check_circle_outline,
-                color: AppColors.success,
-                size: 36,
-              ),
-            ),
-            const SizedBox(height: AppSizes.p16),
-            const Text(
-              'Your request has been\nsent successfully',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            const SizedBox(height: AppSizes.p8),
-            const Text(
-              'The user will contact you soon to coordinate further details.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-            ),
-            const SizedBox(height: AppSizes.p24),
-            CustomButton(
-              text: 'Go Back to Home',
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-            ),
-            const SizedBox(height: AppSizes.p8),
-          ],
-        ),
-      ),
-    );
-  }
+// Needed for AppSizes.p20 if not defined — safe fallback
+extension on AppSizes {
+  static const double p20 = 20.0;
 }
