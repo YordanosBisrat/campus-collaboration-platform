@@ -15,6 +15,7 @@ import '../../features/groups/presentation/screens/my_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
 import '../../features/groups/models/group_model.dart';
+import '../../features/skills/presentation/screens/my_skills_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -81,6 +82,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/groups/my-groups/empty',
       builder: (context, state) => const EmptyMyGroupsScreen(),
+    ),
+    GoRoute(
+      path: '/skills/my-skills',
+      builder: (context, state) => const MySkillsScreen(),
     ),
   ],
 );
