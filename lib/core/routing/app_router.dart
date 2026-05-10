@@ -19,6 +19,7 @@ import '../../features/groups/presentation/screens/my_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
 import '../../features/groups/models/group_model.dart';
+import '../../features/profile/presentation/screens/change_password_screen.dart';
 
 // Shell (bottom nav wrapper)
 import 'main_shell.dart';
@@ -82,6 +83,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/groups/my-groups/empty',
       builder: (context, state) => const EmptyMyGroupsScreen(),
+    ),
+    GoRoute(
+      path: '/change-password',
+      builder: (context, state) => const ChangePasswordScreen(),
     ),
   ],
 );
