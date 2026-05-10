@@ -18,56 +18,9 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  final List<SkillModel> _skills = [
-    SkillModel(
-      id: '1',
-      title: 'Java Tutoring',
-      category: 'Programming',
-      categoryColor: Color(0xFFD6EAF8),
-      categoryTextColor: Color(0xFF2E86C1),
-      description:
-          'Offering help with core Java concepts, object-oriented programming, and debugging assignments.',
-      ownerName: 'Solomon Elias',
-      ownerYear: 'Computer Science, Year 3',
-    ),
-    SkillModel(
-      id: '2',
-      title: 'Conversational Spanish',
-      category: 'Language',
-      categoryColor: Color(0xFFF9EBEA),
-      categoryTextColor: Color(0xFFC0392B),
-      description:
-          'Native Spanish speaker looking to exchange language practice for help with introductory Calculus.',
-      ownerName: 'Ruth Tewodros',
-      ownerYear: 'Languages, Year 2',
-    ),
-    SkillModel(
-      id: '3',
-      title: 'Figma UI/UX Design',
-      category: 'Design',
-      categoryColor: Color(0xFFF5EEF8),
-      categoryTextColor: Color(0xFF8E44AD),
-      description:
-          'Can teach the basics of UI/UX design and prototyping using Figma for your app projects.',
-      ownerName: 'Yordanos Bisrat',
-      ownerYear: 'Software Engineering, Year 3',
-    ),
-    SkillModel(
-      id: '4',
-      title: 'Calculus II Help',
-      category: 'Math',
-      categoryColor: Color(0xFFE8F8F5),
-      categoryTextColor: Color(0xFF1E8449),
-      description:
-          'Available to explain integrals, series, and complex problem-solving strategies for Calculus.',
-      ownerName: 'Henok Tewodros',
-      ownerYear: 'Mathematics, Year 4',
-    ),
-  ];
-
   List<SkillModel> get _filteredSkills {
-    if (_searchQuery.isEmpty) return _skills;
-    return _skills
+    if (_searchQuery.isEmpty) return SkillMockData.allSkills;
+    return SkillMockData.allSkills
         .where(
           (s) =>
               s.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -86,6 +39,8 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+
+      // ── App Bar ──────────────────────────────────────────────────────────
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -107,10 +62,10 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
         ],
       ),
 
-      // ── NO bottomNavigationBar here — MainShell handles it ───────────────
+      // ── NO bottomNavigationBar — MainShell handles it ────────────────────
       body: Column(
         children: [
-          // ── Search Bar ───────────────────────────────────────────
+          // ── Search Bar ───────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.p16,
@@ -121,10 +76,14 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
               onChanged: (val) => setState(() => _searchQuery = val),
               decoration: InputDecoration(
                 hintText: 'Search skills...',
-                hintStyle: const TextStyle(color: AppColors.textSecondary),
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
                 prefixIcon: const Icon(
                   Icons.search,
                   color: AppColors.textSecondary,
+                  size: 20,
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -145,10 +104,10 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
             ),
           ),
 
-          // ── Skills List ──────────────────────────────────────────
+          // ── Skills List ──────────────────────────────────────────────────
           Expanded(
             child: _filteredSkills.isEmpty
-                ? const EmptySkillsWidget()
+                ? _EmptySkillsState()
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSizes.p16,
@@ -159,58 +118,65 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
                       final skill = _filteredSkills[index];
                       return SkillListCard(
                         skill: skill,
-                        onViewDetails: () {
-                          context.push('/skills/detail', extra: skill);
-                        },
+                        onViewDetails: () =>
+                            context.push('/skills/detail', extra: skill),
                       );
                     },
                   ),
           ),
         ],
       ),
+
+      // ── FAB ─────────────────────────────────────────────────────────────
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/skills/create'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 3,
+        child: const Icon(Icons.add, size: 26),
+      ),
     );
   }
 }
 
-// ── Empty Skills Widget ───────────────────────────────────────────────────────
-class EmptySkillsWidget extends StatelessWidget {
-  const EmptySkillsWidget({super.key});
+// ── Empty State ───────────────────────────────────────────────────────────────
 
+class _EmptySkillsState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.p24),
+        padding: const EdgeInsets.all(AppSizes.p32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+              decoration: const BoxDecoration(
+                color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.inbox_outlined,
-                size: 40,
+                size: 36,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: AppSizes.p16),
+            const SizedBox(height: AppSizes.p24),
             const Text(
               'No skills posted yet',
               style: TextStyle(
-                color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: AppSizes.p8),
             const Text(
               'Be the first to share your skill with others',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSizes.p24),
             SizedBox(
