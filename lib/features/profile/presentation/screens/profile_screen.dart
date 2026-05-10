@@ -1,9 +1,11 @@
 // lib/features/profile/presentation/screens/profile_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/logout_dialog.dart'; // ✅ using shared widget
 import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -75,7 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               'nathnael@university.edu',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
-
             const SizedBox(height: 8),
 
             // ── Bio ──────────────────────────────────────────────────
@@ -128,14 +129,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // ── Settings Tiles ───────────────────────────────────────
+            // ── Logout ───────────────────────────────────────────────
             _buildSettingsTile(
               icon: Icons.logout,
               iconColor: AppColors.textPrimary,
               label: 'Logout',
-              onTap: _showLogoutDialog,
+              onTap: () {
+                // ✅ using the shared LogoutDialog from core/widgets
+                showDialog(
+                  context: context,
+                  builder: (_) => const LogoutDialog(),
+                );
+              },
             ),
 
+            // ── Delete Account ───────────────────────────────────────
             _buildSettingsTile(
               icon: Icons.delete_outline,
               iconColor: AppColors.error,
@@ -144,6 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: _showDeleteAccountDialog,
             ),
 
+            // ── Change Password ──────────────────────────────────────
             _buildSettingsTile(
               icon: Icons.lock_outline,
               iconColor: AppColors.textPrimary,
@@ -152,10 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.chevron_right,
                 color: AppColors.textSecondary,
               ),
-              onTap: () {
-                // TODO: wire up with GoRouter
-                Navigator.pushNamed(context, '/change-password');
-              },
+              onTap: () => context.push('/change-password'),
             ),
 
             // ── Notifications Toggle ─────────────────────────────────
@@ -185,8 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     value: _notificationsEnabled,
                     onChanged: (val) =>
                         setState(() => _notificationsEnabled = val),
-                    activeThumbColor:
-                        Colors.white, // ✅ fixed deprecated activeColor
+                    activeThumbColor: Colors.white,
                     activeTrackColor: AppColors.primary,
                   ),
                 ],
@@ -197,11 +202,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(selectedIndex: 3),
+      bottomNavigationBar: _buildBottomNav(context, selectedIndex: 3),
     );
   }
 
-  // ── Settings tile builder ────────────────────────────────────────────
+  // ── Settings tile ────────────────────────────────────────────────────
   Widget _buildSettingsTile({
     required IconData icon,
     required String label,
@@ -228,52 +233,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(color: labelColor, fontSize: 15),
               ),
             ),
-            trailing ?? const SizedBox.shrink(), // ✅ null-aware operator
+            trailing ?? const SizedBox.shrink(),
           ],
         ),
       ),
     );
   }
 
-  // ── Dialogs ──────────────────────────────────────────────────────────
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
-        ),
-        title: const Text(
-          'Log Out',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text('Are you sure you want to log out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: trigger logout logic / GoRouter redirect to login
-            },
-            child: const Text('Logout', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
+  // ── Delete Account Dialog ────────────────────────────────────────────
   void _showDeleteAccountDialog() {
     showDialog(
       context: context,
@@ -305,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             onPressed: () {
               Navigator.pop(context);
-              // TODO: trigger delete account logic
+              context.go('/');
             },
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
@@ -315,7 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ── Bottom Nav ───────────────────────────────────────────────────────
-  Widget _buildBottomNav({required int selectedIndex}) {
+  Widget _buildBottomNav(BuildContext context, {required int selectedIndex}) {
     const labels = ['Home', 'Skills', 'Groups', 'Profile'];
     const icons = [
       Icons.home_outlined,
@@ -323,6 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Icons.group_outlined,
       Icons.person_outline,
     ];
+    const routes = ['/home', '/skills', '/groups', '/profile'];
 
     return BottomNavigationBar(
       currentIndex: selectedIndex,
@@ -331,9 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppColors.background,
       type: BottomNavigationBarType.fixed,
       elevation: 8,
-      onTap: (_) {
-        // TODO: wire up with GoRouter
-      },
+      onTap: (index) => context.go(routes[index]),
       items: List.generate(
         labels.length,
         (i) => BottomNavigationBarItem(icon: Icon(icons[i]), label: labels[i]),
