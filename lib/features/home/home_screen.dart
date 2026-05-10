@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/widgets/custom_button.dart';
-import '../../core/widgets/app_bottom_nav.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -31,7 +30,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: AppSizes.p16),
             child: GestureDetector(
               onTap: () {
-                // Navigate to profile or show menu
+                context.push('/profile');
               },
               child: const CircleAvatar(
                 radius: 20,
@@ -44,6 +43,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      // ── NO bottomNavigationBar here — MainShell handles it ───────────
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.p16,
@@ -65,20 +65,14 @@ class HomeScreen extends StatelessWidget {
                       fontFamily: 'Inter',
                     ),
                   ),
-                  TextSpan(
-                    text: '👋',
-                    style: TextStyle(fontSize: 24),
-                  ),
+                  TextSpan(text: '👋', style: TextStyle(fontSize: 24)),
                 ],
               ),
             ),
             const SizedBox(height: AppSizes.p4),
             const Text(
               'What would you like to do today?',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 15,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
             ),
             const SizedBox(height: AppSizes.p24),
 
@@ -137,13 +131,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: 0,
-        onTap: (index) {
-          final routes = ['/home', '/skills', '/groups', '/profile'];
-          context.go(routes[index]);
-        },
       ),
     );
   }
@@ -233,11 +220,10 @@ class HomeFeatureCard extends StatelessWidget {
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSizes.radiusSmall),
-                        side: const BorderSide(
-                          color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(
+                          AppSizes.radiusSmall,
                         ),
+                        side: const BorderSide(color: AppColors.primaryLight),
                       ),
                     ),
                     child: Text(

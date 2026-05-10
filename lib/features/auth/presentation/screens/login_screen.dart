@@ -78,29 +78,28 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center, // ← centered
               children: [
                 const SizedBox(height: AppSizes.p32),
 
                 // ── NU Logo ──────────────────────────────────────────
-                const Center(
-                  child: Text(
-                    'NU',
-                    style: TextStyle(
-                      color: Color(0xFFFF9A9E),
-                      fontFamily: 'HoltwoodOneSC',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 32,
-                      letterSpacing: -0.5,
-                    ),
+                const Text(
+                  'NU',
+                  style: TextStyle(
+                    color: Color(0xFFFF9A9E),
+                    fontFamily: 'HoltwoodOneSC',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 56, // ← bigger
+                    letterSpacing: -0.5,
                   ),
                 ),
 
                 const SizedBox(height: AppSizes.p24),
 
-                // ── Heading ──────────────────────────────────────────
+                // ── Heading (centered) ───────────────────────────────
                 const Text(
                   'Welcome Back',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -110,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: AppSizes.p4),
                 const Text(
                   'Sign in to continue to Campus App',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -154,23 +154,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                 // ── Email / Username ─────────────────────────────────
-                CustomTextField(
-                  label: 'Email or Username',
-                  hintText: 'student@university.edu',
-                  prefixIcon: Icons.mail_outline,
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  errorText: _emailError,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomTextField(
+                    label: 'Email or Username',
+                    hintText: 'student@university.edu',
+                    prefixIcon: Icons.mail_outline,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    errorText: _emailError,
+                  ),
                 ),
 
                 // ── Password ─────────────────────────────────────────
-                CustomTextField(
-                  label: 'Password',
-                  hintText: '••••••••',
-                  prefixIcon: Icons.lock_outline,
-                  isPassword: true,
-                  controller: _passwordController,
-                  errorText: _passwordError,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomTextField(
+                    label: 'Password',
+                    hintText: '••••••••',
+                    prefixIcon: Icons.lock_outline,
+                    isPassword: true,
+                    controller: _passwordController,
+                    errorText: _passwordError,
+                  ),
                 ),
 
                 // ── Forgot Password ──────────────────────────────────
@@ -201,30 +207,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: AppSizes.p16),
 
                 // ── Sign up link ─────────────────────────────────────
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't have an account? ",
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => context.push('/signup'),
+                      child: const Text(
+                        'Sign Up',
                         style: TextStyle(
-                          color: AppColors.textSecondary,
+                          color: AppColors.primary,
                           fontSize: 14,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => context.push('/signup'),
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: AppSizes.p32),

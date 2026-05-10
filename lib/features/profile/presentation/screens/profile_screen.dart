@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/logout_dialog.dart'; // ✅ using shared widget
+import '../../../../core/widgets/logout_dialog.dart';
 import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
           style: TextStyle(
@@ -35,12 +36,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
+
+      // ── NO bottomNavigationBar here — MainShell handles it ───────────────
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: AppSizes.p16),
 
-            // ── Avatar ──────────────────────────────────────────────
+            // ── Avatar ───────────────────────────────────────────────
             Center(
               child: CircleAvatar(
                 radius: 48,
@@ -135,7 +138,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               iconColor: AppColors.textPrimary,
               label: 'Logout',
               onTap: () {
-                // ✅ using the shared LogoutDialog from core/widgets
                 showDialog(
                   context: context,
                   builder: (_) => const LogoutDialog(),
@@ -202,11 +204,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context, selectedIndex: 3),
     );
   }
 
-  // ── Settings tile ────────────────────────────────────────────────────
   Widget _buildSettingsTile({
     required IconData icon,
     required String label,
@@ -240,7 +240,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ── Delete Account Dialog ────────────────────────────────────────────
   void _showDeleteAccountDialog() {
     showDialog(
       context: context,
@@ -277,32 +276,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
-      ),
-    );
-  }
-
-  // ── Bottom Nav ───────────────────────────────────────────────────────
-  Widget _buildBottomNav(BuildContext context, {required int selectedIndex}) {
-    const labels = ['Home', 'Skills', 'Groups', 'Profile'];
-    const icons = [
-      Icons.home_outlined,
-      Icons.lightbulb_outline,
-      Icons.group_outlined,
-      Icons.person_outline,
-    ];
-    const routes = ['/home', '/skills', '/groups', '/profile'];
-
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.textSecondary,
-      backgroundColor: AppColors.background,
-      type: BottomNavigationBarType.fixed,
-      elevation: 8,
-      onTap: (index) => context.go(routes[index]),
-      items: List.generate(
-        labels.length,
-        (i) => BottomNavigationBarItem(icon: Icon(icons[i]), label: labels[i]),
       ),
     );
   }

@@ -106,6 +106,8 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
           ),
         ],
       ),
+
+      // ── NO bottomNavigationBar here — MainShell handles it ───────────────
       body: Column(
         children: [
           // ── Search Bar ───────────────────────────────────────────
@@ -165,32 +167,6 @@ class _SkillsListScreenState extends State<SkillsListScreen> {
                   ),
           ),
         ],
-      ),
-      bottomNavigationBar: _buildBottomNav(context),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    const labels = ['Home', 'Skills', 'Groups', 'Profile'];
-    const icons = [
-      Icons.home_outlined,
-      Icons.lightbulb_outline,
-      Icons.group_outlined,
-      Icons.person_outline,
-    ];
-    const routes = ['/home', '/skills', '/groups', '/profile'];
-
-    return BottomNavigationBar(
-      currentIndex: 1,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.textSecondary,
-      backgroundColor: AppColors.background,
-      type: BottomNavigationBarType.fixed,
-      elevation: 8,
-      onTap: (index) => context.go(routes[index]),
-      items: List.generate(
-        labels.length,
-        (i) => BottomNavigationBarItem(icon: Icon(icons[i]), label: labels[i]),
       ),
     );
   }
