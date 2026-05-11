@@ -12,14 +12,20 @@ import '../../features/skills/presentation/screens/skills_list_screen.dart';
 import '../../features/groups/presentation/screens/group_list_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 
+// Home sub-screens
+import '../../features/home/search_screen.dart';
+
 // Groups and skills sub-screens
 import '../../features/groups/presentation/screens/create_group_screen.dart';
 import '../../features/groups/presentation/screens/group_detail_screen.dart';
 import '../../features/groups/presentation/screens/my_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
+import '../../features/groups/presentation/screens/groups_error_screen.dart';
 import '../../features/groups/models/group_model.dart';
+
 import '../../features/profile/presentation/screens/change_password_screen.dart';
+
 import '../../features/skills/presentation/screens/skill_detail_screen.dart';
 import '../../features/skills/presentation/screens/create_skill_screen.dart';
 import '../../features/skills/presentation/screens/my_skills_screen.dart';
@@ -65,6 +71,14 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
+    //  Home sub-screens
+    GoRoute(
+      path: '/search',
+      builder: (context, state) {
+        final query = state.extra as String? ?? '';
+        return SearchResultsScreen(initialQuery: query);
+      },
+    ),
 
     // Groups and skills sub-screens
     GoRoute(
@@ -89,6 +103,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/groups/my-groups/empty',
       builder: (context, state) => const EmptyMyGroupsScreen(),
+    ),
+    GoRoute(
+      path: '/groups/error',
+      builder: (context, state) => const GroupsErrorScreen(),
     ),
     GoRoute(
       path: '/change-password',

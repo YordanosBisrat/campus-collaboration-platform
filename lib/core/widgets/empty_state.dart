@@ -3,17 +3,20 @@ import '../theme/app_colors.dart';
 import '../constants/app_sizes.dart';
 import 'custom_button.dart';
 
-class ErrorState extends StatelessWidget {
+class EmptyState extends StatelessWidget {
+  final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback onRetry;
+  final String buttonText;
+  final VoidCallback onPressed;
 
-  const ErrorState({
+  const EmptyState({
     super.key,
-    this.title = 'Failed to load data',
-    this.subtitle =
-        "We couldn't load the data. Please check your connection and try again.",
-    required this.onRetry,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.buttonText,
+    required this.onPressed,
   });
 
   @override
@@ -24,54 +27,36 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //  Error icon
             Container(
-              width: 90,
-              height: 90,
+              width: 80,
+              height: 80,
               decoration: const BoxDecoration(
-                color: AppColors.errorLight,
+                color: AppColors.primaryLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.wifi_off_rounded,
-                color: AppColors.error,
-                size: 40,
-              ),
+              child: Icon(icon, color: AppColors.primary, size: 36),
             ),
-
             const SizedBox(height: AppSizes.p24),
-
-            // Title
             Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-
             const SizedBox(height: AppSizes.p8),
-
-            // Subtitle
             Text(
               subtitle,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
-                height: 1.5,
               ),
             ),
-
             const SizedBox(height: AppSizes.p24),
-
-            // Retry button
-            SizedBox(
-              width: 140,
-              child: CustomButton(text: '↻  Retry', onPressed: onRetry),
-            ),
+            CustomButton(text: buttonText, onPressed: onPressed),
           ],
         ),
       ),

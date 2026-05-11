@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
-import '../../../../core/widgets/app_bottom_nav.dart';
 
 class GroupsErrorScreen extends StatelessWidget {
   const GroupsErrorScreen({super.key});
@@ -18,11 +18,7 @@ class GroupsErrorScreen extends StatelessWidget {
         title: 'Failed to load data',
         subtitle:
             "We couldn't load the groups list. Please check your connection and try again.",
-        onRetry: () {},
-      ),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: 2,
-        onTap: (index) {},
+        onRetry: () => context.go('/groups'),
       ),
     );
   }

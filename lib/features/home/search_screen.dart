@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/widgets/app_bottom_nav.dart';
-import '../../../../core/widgets/category_chip.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/constants/app_sizes.dart';
+import '../../core/widgets/category_chip.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String initialQuery;
@@ -81,19 +81,18 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         title: _SearchBar(controller: _searchController),
         titleSpacing: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.close, size: 20),
-            onPressed: () {
-              _searchController.clear();
-            },
+            onPressed: () => _searchController.clear(),
           ),
         ],
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,7 +168,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 vertical: AppSizes.p8,
               ),
               itemCount: _filteredResults.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.p8),
+              separatorBuilder: (_, __) => const SizedBox(height: AppSizes.p8),
               itemBuilder: (context, index) {
                 final item = _filteredResults[index];
                 return SearchResultItem(
@@ -185,7 +184,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: AppBottomNav(currentIndex: 0, onTap: (index) {}),
     );
   }
 }
@@ -194,7 +192,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
-
   const _SearchBar({required this.controller});
 
   @override
@@ -269,7 +266,7 @@ class SearchResultItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title + Type chip row
+            // Title + Type chip
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -304,7 +301,7 @@ class SearchResultItem extends StatelessWidget {
 
             const SizedBox(height: AppSizes.p12),
 
-            // Person or Members row + View Details
+            // Person / members + View Details
             Row(
               children: [
                 const CircleAvatar(
