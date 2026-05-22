@@ -24,17 +24,23 @@ class AppTheme {
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
-        bodyLarge: TextStyle(
+        titleLarge: TextStyle(
           color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
           fontSize: 16,
         ),
-        bodyMedium: TextStyle(
-          color: AppColors.textSecondary,
+        titleMedium: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
-        bodySmall: TextStyle(
-          color: AppColors.textSecondary,
-          fontSize: 12,
+        bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16),
+        bodyMedium: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        bodySmall: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+        labelLarge: TextStyle(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
         ),
       ),
       appBarTheme: const AppBarTheme(
@@ -115,9 +121,19 @@ class AppTheme {
           ),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          textStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
       cardTheme: CardThemeData(
         color: AppColors.cardBackground,
-        elevation: 2,
+        elevation: AppSizes.cardElevation,
         shadowColor: AppColors.shadowColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -140,6 +156,55 @@ class AppTheme {
         color: AppColors.divider,
         thickness: 1,
         space: 0,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
+        ),
+        contentTextStyle: const TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 14,
+          color: Colors.white,
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
+        ),
+        backgroundColor: AppColors.cardBackground,
+        titleTextStyle: const TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 3,
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.primary;
+          return Colors.transparent;
+        }),
+        side: const BorderSide(color: AppColors.divider, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Colors.white;
+          return AppColors.textSecondary;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.primary;
+          return AppColors.divider;
+        }),
       ),
     );
   }
