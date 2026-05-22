@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../providers/auth_provider.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _isLoading = false;
   bool _emailSent = false;
@@ -23,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _onSendResetLink() {
+  Future<void> _onSendResetLink() async {
     final email = _emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -34,13 +37,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
+    await ref.read(authProvider.notifier).sendPasswordResetEmail(email);
+
+    if (mounted) {
       setState(() {
         _isLoading = false;
         _emailSent = true;
       });
-    });
+    }
   }
 
   @override
@@ -72,7 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             children: [
               const SizedBox(height: AppSizes.p32),
 
-              //  Lock / success icon
+              // ── Icon ───────────────────────────────────────────
               Container(
                 width: 80,
                 height: 80,
@@ -91,7 +95,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              //  Description
               Text(
                 _emailSent
                     ? 'Reset link sent!'
@@ -106,7 +109,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: AppSizes.p32),
 
               if (!_emailSent) ...[
-                //  Email field
                 CustomTextField(
                   label: 'Email Address',
                   hintText: 'student@university.edu',
@@ -117,16 +119,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                 const SizedBox(height: AppSizes.p8),
 
-                //  Send Reset Link button
                 CustomButton(
                   text: 'Send Reset Link',
-                  onPressed: _onSendResetLink,
+                  onPressed: _isLoading ? null : _onSendResetLink,
                   isLoading: _isLoading,
                 ),
 
                 const SizedBox(height: AppSizes.p24),
 
-                //  Back to Login
                 GestureDetector(
                   onTap: () => context.pop(),
                   child: Row(
@@ -150,7 +150,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
               ] else ...[
-                //  Success message
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSizes.p16),
@@ -158,7 +157,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     color: AppColors.successLight,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
                     border: Border.all(
-                      color: AppColors.success.withAlpha((0.4 * 255).round()),
+                      color: AppColors.success.withValues(alpha: 0.4),
                     ),
                   ),
                   child: Text(

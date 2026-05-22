@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../providers/auth_provider.dart';
+import '../providers/auth_state.dart';
+import '../../../../core/routing/app_router.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  bool _isLoading = false;
-  String? _emailError;
-  String? _passwordError;
-  bool _hasSubmissionError = false;
 
   @override
   void dispose() {
@@ -29,46 +28,25 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _onLogin() {
-    setState(() {
-      _emailError = null;
-      _passwordError = null;
-      _hasSubmissionError = false;
-    });
+  Future<void> _onLogin() async {
+    if (!_formKey.currentState!.validate()) return;
 
-    bool hasError = false;
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    await ref
+        .read(authProvider.notifier)
+        .login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
 
-    if (email.isEmpty ||
-        (!email.contains('@university') && !email.contains('.edu'))) {
-      setState(
-        () => _emailError = 'Please enter a valid university email address',
-      );
-      hasError = true;
-    }
-
-    if (password.length < 8) {
-      setState(() => _passwordError = 'Password must be at least 8 characters');
-      hasError = true;
-    }
-
-    if (hasError) {
-      setState(() => _hasSubmissionError = true);
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      context.go('/home');
-    });
+    // Navigation is handled by GoRouter redirect on auth state change
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final isLoading = authState is AuthOperationLoading;
+    final errorMsg = authState is AuthError ? authState.message : null;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -77,25 +55,24 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center, // ← centered
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: AppSizes.p32),
 
-                //  NU Logo
+                // ── NU Logo ────────────────────────────────────────
                 const Text(
                   'NU',
                   style: TextStyle(
                     color: Color(0xFFFF9A9E),
                     fontFamily: 'HoltwoodOneSC',
                     fontWeight: FontWeight.w400,
-                    fontSize: 56, // ← bigger
+                    fontSize: 56,
                     letterSpacing: -0.5,
                   ),
                 ),
 
                 const SizedBox(height: AppSizes.p24),
 
-                //  Heading (centered)
                 const Text(
                   'Welcome Back',
                   textAlign: TextAlign.center,
@@ -117,8 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                //  Error banner
-                if (_hasSubmissionError)
+                // ── Error Banner ───────────────────────────────────
+                if (errorMsg != null)
                   Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(bottom: AppSizes.p16),
@@ -133,16 +110,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.error_outline,
                           color: AppColors.error,
                           size: 18,
                         ),
                         const SizedBox(width: AppSizes.p8),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'There were errors with your submission. Please correct them below.',
-                            style: TextStyle(
+                            errorMsg,
+                            style: const TextStyle(
                               color: AppColors.error,
                               fontSize: 13,
                             ),
@@ -152,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                //  Email / Username
+                // ── Email ──────────────────────────────────────────
                 Align(
                   alignment: Alignment.centerLeft,
                   child: CustomTextField(
@@ -161,11 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icons.mail_outline,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    errorText: _emailError,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      return null;
+                    },
                   ),
                 ),
 
-                //  Password
+                // ── Password ───────────────────────────────────────
                 Align(
                   alignment: Alignment.centerLeft,
                   child: CustomTextField(
@@ -174,15 +156,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icons.lock_outline,
                     isPassword: true,
                     controller: _passwordController,
-                    errorText: _passwordError,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (v.length < 8) {
+                        return 'Password must be at least 8 characters';
+                      }
+                      return null;
+                    },
                   ),
                 ),
 
-                //  Forgot Password
+                // ── Forgot Password ────────────────────────────────
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () => context.push('/forgot'),
+                    onTap: () => context.push(AppRoutes.forgot),
                     child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
@@ -196,16 +186,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSizes.p24),
 
-                //  Login button
+                // ── Login Button ───────────────────────────────────
                 CustomButton(
                   text: 'Login',
-                  onPressed: _onLogin,
-                  isLoading: _isLoading,
+                  onPressed: isLoading ? null : _onLogin,
+                  isLoading: isLoading,
                 ),
 
                 const SizedBox(height: AppSizes.p16),
 
-                //  Sign up link
+                // ── Sign Up Link ───────────────────────────────────
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -217,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => context.push('/signup'),
+                      onTap: () => context.push(AppRoutes.signup),
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(

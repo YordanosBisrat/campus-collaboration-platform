@@ -168,7 +168,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 vertical: AppSizes.p8,
               ),
               itemCount: _filteredResults.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AppSizes.p8),
+              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.p8),
               itemBuilder: (context, index) {
                 final item = _filteredResults[index];
                 return SearchResultItem(
