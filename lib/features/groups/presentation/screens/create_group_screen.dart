@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/widgets/custom_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CreateGroupScreen extends StatefulWidget {
+import '../providers/groups_provider.dart';
+
+class CreateGroupScreen extends ConsumerStatefulWidget {
   const CreateGroupScreen({super.key});
 
   @override
-  State<CreateGroupScreen> createState() => _CreateGroupScreenState();
+  ConsumerState<CreateGroupScreen> createState() => _CreateGroupScreenState();
 }
 
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
+class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _topicCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -24,198 +25,63 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Group "${_nameCtrl.text}" created!'),
-        backgroundColor: AppColors.primary,
-      ),
-    );
-    Navigator.of(context).pop();
+    setState(() => _isLoading = true);
+
+    final err = await ref.read(groupsProvider.notifier).createGroup(
+          name: _nameCtrl.text.trim(),
+          topic: _topicCtrl.text.trim(),
+          description: _descCtrl.text.trim(),
+        );
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (err == null) {
+      if (context.mounted) Navigator.of(context).pop();
+    } else {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(err)),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-
-      //  App Bar
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: AppColors.textPrimary,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Create Group',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ),
-
-      //  Body
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.p16),
+      appBar: AppBar(title: const Text('Create Group')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: AppSizes.p8),
-
-              //  Group Name
-              _FieldLabel('Group Name'),
-              const SizedBox(height: AppSizes.p8),
-              _GroupFormField(
+              TextFormField(
                 controller: _nameCtrl,
-                hintText: 'Enter group name',
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Group name is required'
-                    : null,
+                decoration: const InputDecoration(labelText: 'Group name'),
+                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
               ),
-
-              const SizedBox(height: AppSizes.p16),
-
-              //  Topic
-              _FieldLabel('Topic'),
-              const SizedBox(height: AppSizes.p8),
-              _GroupFormField(
+              const SizedBox(height: 8),
+              TextFormField(
                 controller: _topicCtrl,
-                hintText: 'e.g. Mathematics, Programming',
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Topic is required'
-                    : null,
+                decoration: const InputDecoration(labelText: 'Topic'),
+                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
               ),
-
-              const SizedBox(height: AppSizes.p16),
-
-              //  Description
-              _FieldLabel('Description'),
-              const SizedBox(height: AppSizes.p8),
-              _GroupFormField(
+              const SizedBox(height: 8),
+              TextFormField(
                 controller: _descCtrl,
-                hintText:
-                    'Describe the purpose and goals of the study group...',
-                maxLines: 6,
-                minLines: 5,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Description is required'
-                    : null,
+                decoration: const InputDecoration(labelText: 'Description'),
+                maxLines: 4,
+                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
               ),
-
-              const SizedBox(height: AppSizes.p24),
-
-              //  Create button
-              CustomButton(
-                text: 'Create Group',
-                isPrimary: true,
-                onPressed: _submit,
-              ),
-
-              const SizedBox(height: AppSizes.p16),
-
-              //  Cancel
-              Center(
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 16),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _submit, child: const Text('Create Group')),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Field Label
-
-class _FieldLabel extends StatelessWidget {
-  final String text;
-  const _FieldLabel(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 14,
-        color: AppColors.textPrimary,
-      ),
-    );
-  }
-}
-
-// Form Field
-class _GroupFormField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hintText;
-  final int maxLines;
-  final int minLines;
-  final String? Function(String?)? validator;
-
-  const _GroupFormField({
-    required this.controller,
-    required this.hintText,
-    this.maxLines = 1,
-    this.minLines = 1,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      minLines: minLines,
-      validator: validator,
-      style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.p16,
-          vertical: AppSizes.p16,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-          borderSide: BorderSide(color: AppColors.error, width: 1.2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
       ),
     );

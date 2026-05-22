@@ -110,7 +110,7 @@ class MemberAvatar extends StatelessWidget {
 
 // Member Row
 class MemberRow extends StatelessWidget {
-  final GroupMember member;
+  final GroupViewMember member;
   const MemberRow({super.key, required this.member});
 
   @override

@@ -1,12 +1,12 @@
 enum MemberRole { admin, member }
 
-class GroupMember {
+class GroupViewMember {
   final String id;
   final String name;
   final String field;
   final MemberRole role;
 
-  const GroupMember({
+  const GroupViewMember({
     required this.id,
     required this.name,
     required this.field,
@@ -14,15 +14,15 @@ class GroupMember {
   });
 }
 
-class GroupModel {
+class GroupViewModel {
   final String id;
   final String name;
   final String topic;
   final String description;
   final int memberCount;
-  final List<GroupMember> members;
+  final List<GroupViewMember> members;
 
-  const GroupModel({
+  const GroupViewModel({
     required this.id,
     required this.name,
     required this.topic,
@@ -35,32 +35,32 @@ class GroupModel {
 class GroupMockData {
   GroupMockData._();
 
-  static const List<GroupMember> _mlMembers = [
-    GroupMember(
+  static const List<GroupViewMember> _mlMembers = [
+    GroupViewMember(
       id: 'm1',
       name: 'Chrstian Elias',
       field: 'Computer Science',
       role: MemberRole.admin,
     ),
-    GroupMember(
+    GroupViewMember(
       id: 'm2',
       name: 'Hiruy Tiku',
       field: 'Data Science',
       role: MemberRole.member,
     ),
-    GroupMember(
+    GroupViewMember(
       id: 'm3',
       name: 'Menal Abdulkadir',
       field: 'Mathematics',
       role: MemberRole.member,
     ),
-    GroupMember(
+    GroupViewMember(
       id: 'm4',
       name: 'Sara Bekele',
       field: 'Electrical Engineering',
       role: MemberRole.member,
     ),
-    GroupMember(
+    GroupViewMember(
       id: 'm5',
       name: 'Liya Haile',
       field: 'Software Engineering',
@@ -68,7 +68,7 @@ class GroupMockData {
     ),
   ];
 
-  static const GroupModel advancedML = GroupModel(
+  static const GroupViewModel advancedML = GroupViewModel(
     id: 'g0',
     name: 'Advanced Machine Learning',
     topic: 'Computer Science',
@@ -80,8 +80,8 @@ class GroupMockData {
     members: _mlMembers,
   );
 
-  static const List<GroupModel> allGroups = [
-    GroupModel(
+  static const List<GroupViewModel> allGroups = [
+    GroupViewModel(
       id: 'g1',
       name: 'Data Structures Study',
       topic: 'Computer Science',
@@ -89,7 +89,7 @@ class GroupMockData {
           'A focused group on data structures and algorithms, working through problem sets and interview prep.',
       memberCount: 12,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g2',
       name: 'Calculus II Prep',
       topic: 'Mathematics',
@@ -97,7 +97,7 @@ class GroupMockData {
           'Weekly sessions covering integral calculus, series, and exam preparation strategies.',
       memberCount: 8,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g3',
       name: 'Intro to Psychology',
       topic: 'Psychology',
@@ -105,7 +105,7 @@ class GroupMockData {
           'An introductory study group exploring the foundations of psychological theory and research.',
       memberCount: 24,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g4',
       name: 'Marketing 101 Case Study',
       topic: 'Business',
@@ -115,15 +115,15 @@ class GroupMockData {
     ),
   ];
 
-  static const List<GroupModel> myGroups = [
-    GroupModel(
+  static const List<GroupViewModel> myGroups = [
+    GroupViewModel(
       id: 'g5',
       name: 'Advanced Data Structures',
       topic: 'Computer Science',
       description: 'Deep dive into advanced data structures and system design.',
       memberCount: 14,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g6',
       name: 'Spanish Conversation Practice',
       topic: 'Languages',
@@ -131,7 +131,7 @@ class GroupMockData {
           'Practice conversational Spanish with native and learner peers.',
       memberCount: 8,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g7',
       name: 'Figma & UI Design Enthusiasts',
       topic: 'Design',
@@ -139,7 +139,7 @@ class GroupMockData {
           'Share Figma tips, critique designs, and grow together as UI designers.',
       memberCount: 22,
     ),
-    GroupModel(
+    GroupViewModel(
       id: 'g8',
       name: 'Calculus 101 Midterm Prep',
       topic: 'Mathematics',

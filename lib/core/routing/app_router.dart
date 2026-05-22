@@ -25,7 +25,8 @@ import '../../features/groups/presentation/screens/my_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
 import '../../features/groups/presentation/screens/groups_error_screen.dart';
-import '../../features/groups/models/group_model.dart';
+import '../../features/groups/presentation/screens/edit_group_screen.dart';
+import '../../features/groups/domain/entities/group_entity.dart';
 
 // Profile sub-screens
 import '../../features/profile/presentation/screens/change_password_screen.dart';
@@ -161,7 +162,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.groupDetail,
         builder: (_, state) {
-          final group = state.extra as GroupModel;
+          final group = state.extra as GroupEntity;
           return GroupDetailScreen(group: group);
         },
       ),
@@ -185,7 +186,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.groupsError,
         builder: (_, _) => const GroupsErrorScreen(),
       ),
+      
 
+      
       // ── Profile sub-screens ────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.changePassword,
