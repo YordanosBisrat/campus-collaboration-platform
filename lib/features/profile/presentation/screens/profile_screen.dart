@@ -1,23 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/logout_dialog.dart';
-import 'edit_profile_screen.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../providers/profile_provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _notificationsEnabled = true;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(profileNotifierProvider.notifier).loadProfile();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(profileNotifierProvider);
+
+    final name = switch (profileState) {
+      ProfileLoaded(:final profile) => profile.fullName,
+      ProfileUpdated(:final profile) => profile.fullName,
+      _ => 'Loading...',
+    };
+
+    final email = switch (profileState) {
+      ProfileLoaded(:final profile) => profile.email,
+      ProfileUpdated(:final profile) => profile.email,
+      _ => '',
+    };
+
+    final bio = switch (profileState) {
+      ProfileLoaded(:final profile) => profile.bio,
+      ProfileUpdated(:final profile) => profile.bio,
+      _ => '',
+    };
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -34,29 +64,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-
-      //  NO bottomNavigationBar here — MainShell handles it
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: AppSizes.p16),
 
-            //  Avatar
+            // ── Avatar ─────────────────────────────────────────
             Center(
               child: CircleAvatar(
                 radius: 48,
-                backgroundColor: const Color(0xFFE0C8BE),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
-                    width: 96,
-                    height: 96,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.person,
-                      size: 56,
-                      color: AppColors.primary,
-                    ),
+                backgroundColor: AppColors.primaryLight,
+                child: Text(
+                  name.isNotEmpty ? name[0].toUpperCase() : '?',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -64,57 +87,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: AppSizes.p16),
 
-            //  Name & Email
-            const Text(
-              'Nathnael Worku',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'nathnael@university.edu',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-            ),
-            const SizedBox(height: 8),
-
-            //  Bio
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSizes.p24),
-              child: Text(
-                'Computer Science junior. Passionate about AI, open-source, and helping others learn how to code.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 13,
-                  height: 1.5,
-                ),
-              ),
-            ),
+            // ── Name & Email ───────────────────────────────────
+            profileState is ProfileLoading
+                ? const CircularProgressIndicator(color: AppColors.primary)
+                : Column(
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        email,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (bio.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.p24,
+                          ),
+                          child: Text(
+                            bio,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 13,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
 
             const SizedBox(height: AppSizes.p24),
 
-            //  Edit Profile Button
+            // ── Edit Profile Button ────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
               child: CustomButton(
                 text: 'Edit Profile',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const EditProfileScreen(),
-                    ),
-                  );
-                },
+                onPressed: () => context.push('/edit-profile'),
               ),
             ),
 
             const SizedBox(height: AppSizes.p24),
 
-            //  Account Settings Label
+            // ── Account Settings ───────────────────────────────
             const Padding(
               padding: EdgeInsets.only(left: AppSizes.p16, bottom: AppSizes.p8),
               child: Align(
@@ -130,7 +157,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            //  Logout
             _buildSettingsTile(
               icon: Icons.logout,
               iconColor: AppColors.textPrimary,
@@ -143,7 +169,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
 
-            //  Delete Account
             _buildSettingsTile(
               icon: Icons.delete_outline,
               iconColor: AppColors.error,
@@ -152,7 +177,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: _showDeleteAccountDialog,
             ),
 
-            //  Change Password
             _buildSettingsTile(
               icon: Icons.lock_outline,
               iconColor: AppColors.textPrimary,
@@ -164,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () => context.push('/change-password'),
             ),
 
-            //  Notifications Toggle
+            // ── Notifications Toggle ───────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.p16,
@@ -269,6 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             onPressed: () {
               Navigator.pop(context);
+              ref.read(authProvider.notifier).logout();
               context.go('/');
             },
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
