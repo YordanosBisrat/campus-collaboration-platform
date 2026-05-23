@@ -1,14 +1,38 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/widgets/custom_button.dart';
+import '../auth/presentation/providers/auth_provider.dart';
+import '../auth/presentation/providers/auth_state.dart';
+import 'presentation/providers/home_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(homeNotifierProvider.notifier).loadActivity();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final homeState = ref.watch(homeNotifierProvider);
+
+    final userName = authState is AuthAuthenticated
+        ? authState.user.fullName.split(' ').first
+        : 'there';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -29,15 +53,11 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: AppSizes.p16),
             child: GestureDetector(
-              onTap: () {
-                context.push('/profile');
-              },
+              onTap: () => context.push('/profile'),
               child: const CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryLight,
-                backgroundImage: AssetImage(
-                  'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
-                ),
+                child: Icon(Icons.person, color: AppColors.primary, size: 22),
               ),
             ),
           ),
@@ -51,20 +71,20 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //  Greeting
+            // ── Greeting ──────────────────────────────────────
             RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Hello, Nati! ',
-                    style: TextStyle(
+                    text: 'Hello, $userName! ',
+                    style: const TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 26,
                       fontFamily: 'Inter',
                     ),
                   ),
-                  TextSpan(text: '👋', style: TextStyle(fontSize: 24)),
+                  const TextSpan(text: '👋', style: TextStyle(fontSize: 24)),
                 ],
               ),
             ),
@@ -75,7 +95,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p24),
 
-            //  Skill Exchange Card
+            // ── Skill Exchange Card ────────────────────────────
             HomeFeatureCard(
               icon: Icons.menu_book_outlined,
               iconBgColor: AppColors.primaryLight,
@@ -89,7 +109,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p16),
 
-            //  Study Groups Card
+            // ── Study Groups Card ──────────────────────────────
             HomeFeatureCard(
               icon: Icons.group_outlined,
               iconBgColor: const Color(0xFFE0F7F4),
@@ -103,7 +123,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSizes.p24),
 
-            //  Recent Activity
+            // ── Recent Activity ────────────────────────────────
             const Text(
               'Recent Activity',
               style: TextStyle(
@@ -113,21 +133,50 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSizes.p16),
-            const HomeActivityItem(
-              icon: Icons.chat_bubble_outline_rounded,
-              iconBgColor: Color(0xFFE3F0FF),
-              iconColor: Color(0xFF5B9BD5),
-              title: 'New message in CS 101 Group',
-              subtitle: '2 hours ago',
-            ),
-            const SizedBox(height: AppSizes.p8),
-            const HomeActivityItem(
-              icon: Icons.sync_alt_rounded,
-              iconBgColor: Color(0xFFE8F5E9),
-              iconColor: Color(0xFF66BB6A),
-              title: 'Sarah accepted your Guitar skill request',
-              subtitle: 'Just now',
-            ),
+
+            // ── Activity from provider ─────────────────────────
+            switch (homeState) {
+              HomeLoading() => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              HomeError(:final message) => Center(
+                child: Text(
+                  message,
+                  style: const TextStyle(color: AppColors.error),
+                ),
+              ),
+              HomeLoaded(:final activities) =>
+                activities.isEmpty
+                    ? const Text(
+                        'No recent activity yet.',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      )
+                    : Column(
+                        children: activities
+                            .map(
+                              (a) => Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSizes.p8,
+                                ),
+                                child: HomeActivityItem(
+                                  icon: a.type == 'message'
+                                      ? Icons.chat_bubble_outline_rounded
+                                      : Icons.sync_alt_rounded,
+                                  iconBgColor: a.type == 'message'
+                                      ? const Color(0xFFE3F0FF)
+                                      : const Color(0xFFE8F5E9),
+                                  iconColor: a.type == 'message'
+                                      ? const Color(0xFF5B9BD5)
+                                      : const Color(0xFF66BB6A),
+                                  title: a.title,
+                                  subtitle: a.subtitle,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+              _ => const SizedBox.shrink(),
+            },
           ],
         ),
       ),
@@ -135,7 +184,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-//  Feature Card Widget  ───────────────────────────────────────────────────────
+// ── Feature Card Widget ───────────────────────────────────────────────────────
 
 class HomeFeatureCard extends StatelessWidget {
   final IconData icon;
@@ -245,7 +294,7 @@ class HomeFeatureCard extends StatelessWidget {
   }
 }
 
-//  Activity Item Widget  ──────────────────────────────────────────────────────
+// ── Activity Item Widget ──────────────────────────────────────────────────────
 
 class HomeActivityItem extends StatelessWidget {
   final IconData icon;

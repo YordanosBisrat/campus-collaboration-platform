@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/widgets/category_chip.dart';
+import 'presentation/providers/home_provider.dart';
 
-class SearchResultsScreen extends StatefulWidget {
+class SearchResultsScreen extends ConsumerStatefulWidget {
   final String initialQuery;
 
   const SearchResultsScreen({super.key, this.initialQuery = ''});
 
   @override
-  State<SearchResultsScreen> createState() => _SearchResultsScreenState();
+  ConsumerState<SearchResultsScreen> createState() =>
+      _SearchResultsScreenState();
 }
 
-class _SearchResultsScreenState extends State<SearchResultsScreen> {
+class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   late TextEditingController _searchController;
   String _selectedFilter = 'All Results';
 
   final List<String> _filters = ['All Results', 'Skills', 'Study Groups'];
 
-  final List<Map<String, dynamic>> _results = [
+  // Static mock results for display when search is empty
+  final List<Map<String, dynamic>> _mockResults = [
     {
       'title': 'Java Programming Tutoring for Beginners',
       'type': 'Skill',
@@ -40,7 +44,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       'title': 'Java Spring Boot Web Development',
       'type': 'Skill',
       'description':
-          'Learn how to build RESTful APIs and microservices using Java Spring Boot. I have...',
+          'Learn how to build RESTful APIs and microservices using Java Spring Boot...',
       'person': 'Sarah Chen',
       'members': null,
     },
@@ -48,7 +52,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       'title': 'Java Final Exam Prep',
       'type': 'Group',
       'description':
-          'Study group focused on preparing for the CS102 final exam. We will review past papers...',
+          'Study group focused on preparing for the CS102 final exam...',
       'person': null,
       'members': 4,
     },
@@ -58,6 +62,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController(text: widget.initialQuery);
+    if (widget.initialQuery.isNotEmpty) {
+      Future.microtask(() {
+        ref.read(searchNotifierProvider.notifier).search(widget.initialQuery);
+      });
+    }
   }
 
   @override
@@ -66,16 +75,18 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _filteredResults {
-    if (_selectedFilter == 'All Results') return _results;
+  List<Map<String, dynamic>> get _filteredMockResults {
+    if (_selectedFilter == 'All Results') return _mockResults;
     if (_selectedFilter == 'Skills') {
-      return _results.where((r) => r['type'] == 'Skill').toList();
+      return _mockResults.where((r) => r['type'] == 'Skill').toList();
     }
-    return _results.where((r) => r['type'] == 'Group').toList();
+    return _mockResults.where((r) => r['type'] == 'Group').toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final searchState = ref.watch(searchNotifierProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -83,20 +94,27 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
           onPressed: () => context.pop(),
         ),
-        title: _SearchBar(controller: _searchController),
+        title: _SearchBar(
+          controller: _searchController,
+          onChanged: (query) {
+            ref.read(searchNotifierProvider.notifier).search(query);
+          },
+        ),
         titleSpacing: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.close, size: 20),
-            onPressed: () => _searchController.clear(),
+            onPressed: () {
+              _searchController.clear();
+              ref.read(searchNotifierProvider.notifier).clear();
+            },
           ),
         ],
       ),
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //  Filter Chips
+          // ── Filter Chips ───────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.p16,
@@ -146,41 +164,86 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             ),
           ),
 
-          //  Results Count
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSizes.p16),
-            child: Text(
-              '${_filteredResults.length} results found',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: AppSizes.p8),
-
-          //  Results List
+          // ── Body ───────────────────────────────────────────
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.p16,
-                vertical: AppSizes.p8,
+            child: switch (searchState) {
+              SearchLoading() => const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
               ),
-              itemCount: _filteredResults.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.p8),
-              itemBuilder: (context, index) {
-                final item = _filteredResults[index];
-                return SearchResultItem(
-                  title: item['title'],
-                  type: item['type'],
-                  description: item['description'],
-                  person: item['person'],
-                  members: item['members'],
-                  onTap: () {},
-                );
-              },
-            ),
+              SearchError(:final message) => Center(
+                child: Text(
+                  message,
+                  style: const TextStyle(color: AppColors.error),
+                ),
+              ),
+              SearchLoaded(:final results) =>
+                results.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No results found.',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSizes.p16,
+                          vertical: AppSizes.p8,
+                        ),
+                        itemCount: results.length,
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(height: AppSizes.p8),
+                        itemBuilder: (context, index) {
+                          final item = results[index];
+                          return SearchResultItem(
+                            title: item.title,
+                            type: item.type,
+                            description: item.subtitle,
+                            onTap: () {},
+                          );
+                        },
+                      ),
+              // Default: show mock results
+              _ => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSizes.p16,
+                    ),
+                    child: Text(
+                      '${_filteredMockResults.length} results found',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSizes.p8),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.p16,
+                        vertical: AppSizes.p8,
+                      ),
+                      itemCount: _filteredMockResults.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSizes.p8),
+                      itemBuilder: (context, index) {
+                        final item = _filteredMockResults[index];
+                        return SearchResultItem(
+                          title: item['title'],
+                          type: item['type'],
+                          description: item['description'],
+                          person: item['person'],
+                          members: item['members'],
+                          onTap: () {},
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            },
           ),
         ],
       ),
@@ -188,11 +251,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   }
 }
 
-//  Search Bar
+// ── Search Bar ────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
-  const _SearchBar({required this.controller});
+  final ValueChanged<String> onChanged;
+
+  const _SearchBar({required this.controller, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +270,7 @@ class _SearchBar extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        onChanged: onChanged,
         style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
         decoration: const InputDecoration(
           hintText: 'Search skills or groups...',
@@ -224,7 +290,7 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-//  Search Result Item
+// ── Search Result Item ────────────────────────────────────────────────────────
 
 class SearchResultItem extends StatelessWidget {
   final String title;
@@ -266,7 +332,6 @@ class SearchResultItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title + Type chip
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -284,10 +349,7 @@ class SearchResultItem extends StatelessWidget {
                 CategoryChip(label: type),
               ],
             ),
-
             const SizedBox(height: AppSizes.p8),
-
-            // Description
             Text(
               description,
               style: const TextStyle(
@@ -298,10 +360,7 @@ class SearchResultItem extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-
             const SizedBox(height: AppSizes.p12),
-
-            // Person / members + View Details
             Row(
               children: [
                 const CircleAvatar(
