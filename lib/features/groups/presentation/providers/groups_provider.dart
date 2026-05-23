@@ -75,6 +75,10 @@ class GroupsNotifier extends Notifier<GroupsState> {
     }
   }
 
+  void _refreshMyGroups() {
+    ref.invalidate(myGroupsProvider);
+  }
+
   Future<void> refresh() => _load();
 
   // ── Create ────────────────────────────────────────────────────────────────
@@ -101,6 +105,7 @@ class GroupsNotifier extends Notifier<GroupsState> {
         creatorField: user.bio,
       );
       state = GroupsLoaded([newGroup, ...prev]);
+      _refreshMyGroups();
       return null; // null = success
     } catch (e) {
       state = GroupsLoaded(prev);
@@ -128,6 +133,7 @@ class GroupsNotifier extends Notifier<GroupsState> {
       state = GroupsLoaded(
         prev.map((g) => g.id == updated.id ? updated : g).toList(),
       );
+      _refreshMyGroups();
       return null;
     } catch (e) {
       state = GroupsLoaded(prev);
@@ -143,6 +149,7 @@ class GroupsNotifier extends Notifier<GroupsState> {
     try {
       await _repo.deleteGroup(groupId);
       state = GroupsLoaded(prev.where((g) => g.id != groupId).toList());
+      _refreshMyGroups();
       return null;
     } catch (e) {
       state = GroupsLoaded(prev);
@@ -170,8 +177,19 @@ class GroupsNotifier extends Notifier<GroupsState> {
         userField: user.bio,
       );
       state = GroupsLoaded(
-        prev.map((g) => g.id == groupId ? g.copyWith(memberCount: g.memberCount + 1) : g).toList(),
+        prev.map((g) {
+          if (g.id != groupId) return g;
+          final memberIds = List<String>.from(g.memberIds);
+          if (!memberIds.contains(user.id)) {
+            memberIds.add(user.id);
+          }
+          return g.copyWith(
+            memberCount: g.memberCount + 1,
+            memberIds: memberIds,
+          );
+        }).toList(),
       );
+      _refreshMyGroups();
       return null;
     } catch (e) {
       state = GroupsLoaded(prev);
@@ -188,10 +206,22 @@ class GroupsNotifier extends Notifier<GroupsState> {
     state = GroupsOperationLoading(prev);
     final user = ref.read(currentUserProvider);
     try {
-      await _repo.leaveGroup(groupId: groupId, userId: user!.id);
+      if (user == null) {
+        state = GroupsLoaded(prev);
+        return 'You must be logged in.';
+      }
+      await _repo.leaveGroup(groupId: groupId, userId: user.id);
       state = GroupsLoaded(
-        prev.map((g) => g.id == groupId ? g.copyWith(memberCount: (g.memberCount - 1).clamp(0, 999999)) : g).toList(),
+        prev.map((g) {
+          if (g.id != groupId) return g;
+          final memberIds = g.memberIds.where((id) => id != user.id).toList();
+          return g.copyWith(
+            memberCount: (g.memberCount - 1).clamp(0, 999999),
+            memberIds: memberIds,
+          );
+        }).toList(),
       );
+      _refreshMyGroups();
       return null;
     } catch (e) {
       state = GroupsLoaded(prev);

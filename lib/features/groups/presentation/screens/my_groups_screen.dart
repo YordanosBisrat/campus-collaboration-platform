@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import '../providers/groups_provider.dart';
 import '../../domain/entities/group_entity.dart';
-
-// Temporary placeholder to satisfy analyzer when older references exist.
-// Presentation uses `GroupEntity` / `GroupViewModel`; remove if unused.
-class GroupModel {}
+import '../providers/groups_provider.dart';
 
 class MyGroupsScreen extends ConsumerWidget {
   const MyGroupsScreen({super.key});
@@ -21,6 +18,7 @@ class MyGroupsScreen extends ConsumerWidget {
     if (state is MyGroupsError) {
       return const Scaffold(body: Center(child: Text('Failed to load your groups')));
     }
+
     final groups = (state is MyGroupsLoaded) ? state.groups : <GroupEntity>[];
 
     return Scaffold(
@@ -32,6 +30,8 @@ class MyGroupsScreen extends ConsumerWidget {
               itemBuilder: (_, i) => ListTile(
                 title: Text(groups[i].name),
                 subtitle: Text(groups[i].topic),
+                trailing: Text('${groups[i].memberCount} members'),
+                onTap: () => context.push('/groups/detail', extra: groups[i]),
               ),
             ),
     );

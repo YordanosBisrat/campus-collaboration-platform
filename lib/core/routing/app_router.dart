@@ -25,7 +25,6 @@ import '../../features/groups/presentation/screens/my_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_groups_screen.dart';
 import '../../features/groups/presentation/screens/empty_my_groups_screen.dart';
 import '../../features/groups/presentation/screens/groups_error_screen.dart';
-import '../../features/groups/presentation/screens/edit_group_screen.dart';
 import '../../features/groups/domain/entities/group_entity.dart';
 
 // Profile sub-screens

@@ -39,11 +39,15 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     setState(() => _isLoading = false);
 
     if (err == null) {
-      if (context.mounted) Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
     } else {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err)),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(err)),
+        );
+      }
     }
   }
 

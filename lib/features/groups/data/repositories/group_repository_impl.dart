@@ -46,7 +46,32 @@ class GroupRepositoryImpl implements GroupRepository {
   @override
   Future<List<GroupEntity>> getMyGroups(String userId) async {
     final cached = await local.getMyGroups(userId);
-    return _enrichGroups(cached);
+    if (cached.isNotEmpty) return _enrichGroups(cached);
+
+    try {
+      final remoteGroups = await remote.fetchAllGroups();
+      await local.cacheGroups(remoteGroups);
+
+      final groupMembers = <GroupMemberModel>[];
+      for (final group in remoteGroups) {
+        final members = await remote.fetchGroupMembers(group.id);
+        groupMembers.addAll(members);
+      }
+      if (groupMembers.isNotEmpty) {
+        await local.cacheMembers(groupMembers);
+      }
+
+      final myGroups = remoteGroups.where((group) {
+        if (group.creatorId == userId) return true;
+        return groupMembers.any(
+          (member) => member.groupId == group.id && member.userId == userId,
+        );
+      }).toList();
+
+      return _enrichGroups(myGroups);
+    } catch (_) {
+      return [];
+    }
   }
 
   @override

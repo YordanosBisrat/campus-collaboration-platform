@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/group_entity.dart';
 import '../providers/groups_provider.dart';
@@ -67,9 +68,10 @@ class _GroupListScreenState extends ConsumerState<GroupListScreen> {
                             title: Text(displayed[i].name),
                             subtitle: Text(displayed[i].topic),
                             trailing: Text('${displayed[i].memberCount}'),
-                            onTap: () {
-                              // Navigate using Navigator; router may override
-                            },
+                            onTap: () => context.push(
+                              '/groups/detail',
+                              extra: displayed[i],
+                            ),
                           ),
                         );
                       }),
