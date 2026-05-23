@@ -1,40 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../providers/profile_provider.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final _fullNameController = TextEditingController(text: 'Nathnael Worku');
-  final _emailController = TextEditingController(
-    text: 'nathnael@university.edu',
-  );
-
+  late final TextEditingController _fullNameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _bioController;
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final profileState = ref.read(profileNotifierProvider);
+    final name = profileState is ProfileLoaded
+        ? profileState.profile.fullName
+        : profileState is ProfileUpdated
+        ? profileState.profile.fullName
+        : '';
+    final email = profileState is ProfileLoaded
+        ? profileState.profile.email
+        : profileState is ProfileUpdated
+        ? profileState.profile.email
+        : '';
+    final bio = profileState is ProfileLoaded
+        ? profileState.profile.bio
+        : profileState is ProfileUpdated
+        ? profileState.profile.bio
+        : '';
+
+    _fullNameController = TextEditingController(text: name);
+    _emailController = TextEditingController(text: email);
+    _bioController = TextEditingController(text: bio);
+  }
 
   @override
   void dispose() {
     _fullNameController.dispose();
     _emailController.dispose();
+    _bioController.dispose();
     super.dispose();
   }
 
   Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isSaving = true);
 
-    // Simulate network call
-    await Future.delayed(const Duration(seconds: 1));
+    await ref
+        .read(profileNotifierProvider.notifier)
+        .updateProfile(
+          fullName: _fullNameController.text.trim(),
+          email: _emailController.text.trim(),
+          bio: _bioController.text.trim(),
+        );
 
     setState(() => _isSaving = false);
 
@@ -84,40 +113,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               const SizedBox(height: AppSizes.p16),
 
-              //  Avatar with edit pencil
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  CircleAvatar(
+              // ── Avatar ─────────────────────────────────────────
+              Consumer(
+                builder: (context, ref, _) {
+                  final profileState = ref.watch(profileNotifierProvider);
+                  final name = profileState is ProfileLoaded
+                      ? profileState.profile.fullName
+                      : profileState is ProfileUpdated
+                      ? profileState.profile.fullName
+                      : '?';
+                  return CircleAvatar(
                     radius: 48,
-                    backgroundColor: const Color(0xFFE0C8BE),
-                    backgroundImage: const AssetImage(
-                      'assets/images/Screenshot 2026-04-17 at 4.24.32 PM.png',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
+                    backgroundColor: AppColors.primaryLight,
+                    child: Text(
+                      name.isNotEmpty ? name[0].toUpperCase() : '?',
+                      style: const TextStyle(
                         color: AppColors.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 14,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
 
               const SizedBox(height: AppSizes.p24),
 
-              //  Full Name
+              // ── Full Name ──────────────────────────────────────
               CustomTextField(
                 label: 'Full Name',
                 hintText: 'Enter your full name',
@@ -131,9 +153,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
 
-              const SizedBox(height: AppSizes.p16),
-
-              //  Email Address
+              // ── Email ──────────────────────────────────────────
               CustomTextField(
                 label: 'Email Address',
                 hintText: 'your@university.edu',
@@ -150,9 +170,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
 
+              // ── Bio ────────────────────────────────────────────
+              CustomTextField(
+                label: 'Bio',
+                hintText: 'Tell us about yourself...',
+                prefixIcon: Icons.info_outline,
+                controller: _bioController,
+                maxLines: 3,
+              ),
+
               const SizedBox(height: AppSizes.p24),
 
-              //  Save / Loading
+              // ── Save Button ────────────────────────────────────
               _isSaving
                   ? const SizedBox(
                       height: 50,
@@ -166,7 +195,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              //  Cancel Button
+              // ── Cancel Button ──────────────────────────────────
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,
@@ -176,18 +205,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: AppSizes.p24),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _pickImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Image picker not wired yet'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
         ),
       ),
     );

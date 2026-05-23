@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_colors.dart';
-import '../../../../../../core/constants/app_sizes.dart';
-import '../../../../../../core/widgets/custom_button.dart';
-import '../../../../../../core/widgets/custom_text_field.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class ChangePasswordScreen extends StatefulWidget {
+class ChangePasswordScreen extends ConsumerStatefulWidget {
   const ChangePasswordScreen({super.key});
 
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  ConsumerState<ChangePasswordScreen> createState() =>
+      _ChangePasswordScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
   bool _isSaving = false;
 
   @override
@@ -30,15 +31,32 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   Future<void> _updatePassword() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isSaving = true);
 
-    // Simulate network call
-    await Future.delayed(const Duration(seconds: 1));
+    final error = await ref
+        .read(authProvider.notifier)
+        .changePassword(
+          currentPassword: _currentPasswordController.text.trim(),
+          newPassword: _newPasswordController.text.trim(),
+        );
 
     setState(() => _isSaving = false);
 
     if (!mounted) return;
+
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
+          ),
+        ),
+      );
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -84,7 +102,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             children: [
               const SizedBox(height: AppSizes.p16),
 
-              //  Current Password
+              // ── Current Password ───────────────────────────────
               CustomTextField(
                 label: 'Current Password',
                 hintText: '••••••••••••',
@@ -99,12 +117,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
 
-              const SizedBox(height: AppSizes.p16),
-
-              //  New Password
+              // ── New Password ───────────────────────────────────
               CustomTextField(
                 label: 'New Password',
-                hintText: 'CampusRules2023!',
+                hintText: 'Enter new password',
                 prefixIcon: Icons.lock_outline,
                 isPassword: true,
                 controller: _newPasswordController,
@@ -119,12 +135,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
 
-              const SizedBox(height: AppSizes.p16),
-
-              //  Confirm New Password
+              // ── Confirm New Password ───────────────────────────
               CustomTextField(
                 label: 'Confirm New Password',
-                hintText: 'CampusRules2023!',
+                hintText: 'Re-enter new password',
                 prefixIcon: Icons.lock_outline,
                 isPassword: true,
                 controller: _confirmPasswordController,
@@ -141,7 +155,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p24),
 
-              //  Update Password Button
+              // ── Update Button ──────────────────────────────────
               _isSaving
                   ? const SizedBox(
                       height: 50,
@@ -158,7 +172,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
               const SizedBox(height: AppSizes.p16),
 
-              //  Cancel Button
+              // ── Cancel Button ──────────────────────────────────
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,
