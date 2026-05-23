@@ -23,12 +23,6 @@ class SkillsErrorScreen extends StatelessWidget {
             fontSize: 24,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.tune, color: AppColors.textPrimary),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Center(
         child: Padding(

@@ -1,67 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/widgets/app_dialogs.dart';
+import '../../../../core/widgets/loading_widget.dart';
+import '../../data/models/skill_model.dart';
+import '../../domain/entities/skill_entity.dart';
+import '../providers/skills_provider.dart';
 import '../widgets/skill_widgets.dart';
-import '../../models/skill_model.dart';
 
-class MySkillsScreen extends StatefulWidget {
+class MySkillsScreen extends ConsumerWidget {
   const MySkillsScreen({super.key});
 
   @override
-  State<MySkillsScreen> createState() => _MySkillsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(mySkillsProvider);
 
-class _MySkillsScreenState extends State<MySkillsScreen> {
-  final List<SkillModel> _mySkills = SkillMockData.allSkills.take(3).toList();
+    if (state is MySkillsLoading) {
+      return const Scaffold(body: ShimmerList());
+    }
 
-  void _onDelete(SkillModel skill) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
-        ),
-        title: const Text(
-          'Delete Skill',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+    if (state is MySkillsError) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('My Skills')),
+        body: Center(
+          child: Text(
+            state.message,
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
         ),
-        content: Text('Are you sure you want to delete "${skill.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() => _mySkills.remove(skill));
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+      );
+    }
 
-  @override
-  Widget build(BuildContext context) {
+    final skills = state is MySkillsLoaded ? state.skills : <SkillEntity>[];
+
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -79,23 +54,20 @@ class _MySkillsScreenState extends State<MySkillsScreen> {
         ),
         centerTitle: true,
       ),
-
-      body: _mySkills.isEmpty
+      body: skills.isEmpty
           ? _EmptyMySkillsState()
           : ListView.builder(
               padding: const EdgeInsets.all(AppSizes.p16),
-              itemCount: _mySkills.length,
-              itemBuilder: (context, index) {
-                final skill = _mySkills[index];
+              itemCount: skills.length,
+              itemBuilder: (_, i) {
+                final skill = SkillModel.fromEntity(skills[i]);
                 return MySkillCard(
                   skill: skill,
-                  onEdit: () => context.push('/skills/create'),
-                  onDelete: () => _onDelete(skill),
+                  onEdit: () => context.push('/skills/create', extra: skill),
+                  onDelete: () => _confirmDelete(context, ref, skill),
                 );
               },
             ),
-
-      //  FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/skills/create'),
         backgroundColor: AppColors.primary,
@@ -105,9 +77,32 @@ class _MySkillsScreenState extends State<MySkillsScreen> {
       ),
     );
   }
-}
 
-//  Empty My Skills State
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    SkillModel skill,
+  ) async {
+    final confirmed = await showConfirmDialog(
+      context: context,
+      title: 'Delete Skill',
+      message: 'Are you sure you want to delete "${skill.title}"?',
+      confirmText: 'Delete',
+      isDestructive: true,
+      icon: Icons.delete_outline,
+    );
+    if (confirmed && context.mounted) {
+      final err = await ref.read(skillsProvider.notifier).deleteSkill(skill.id);
+      if (context.mounted) {
+        if (err == null) {
+          showSuccessSnackBar(context, 'Skill deleted.');
+        } else {
+          showErrorSnackBar(context, err);
+        }
+      }
+    }
+  }
+}
 
 class _EmptyMySkillsState extends StatelessWidget {
   @override

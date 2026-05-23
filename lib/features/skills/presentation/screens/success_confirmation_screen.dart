@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../../core/theme/app_colors.dart';
-import '../../../../../../core/constants/app_sizes.dart';
-import '../../../../../../core/widgets/custom_button.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/widgets/custom_button.dart';
 
 class SuccessConfirmationScreen extends StatelessWidget {
   const SuccessConfirmationScreen({super.key});
@@ -19,8 +19,6 @@ class SuccessConfirmationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
-
-              //  Success icon
               Container(
                 width: 100,
                 height: 100,
@@ -34,10 +32,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
                   color: AppColors.success,
                 ),
               ),
-
               const SizedBox(height: AppSizes.p24),
-
-              //  Title
               const Text(
                 'Your request has been\nsent successfully',
                 textAlign: TextAlign.center,
@@ -48,10 +43,7 @@ class SuccessConfirmationScreen extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-
               const SizedBox(height: AppSizes.p12),
-
-              //  Subtitle
               const Text(
                 'The user will contact you soon to\ncoordinate further details.',
                 textAlign: TextAlign.center,
@@ -61,15 +53,11 @@ class SuccessConfirmationScreen extends StatelessWidget {
                   height: 1.6,
                 ),
               ),
-
               const Spacer(),
-
-              //  Go Back to Home button
               CustomButton(
                 text: 'Go Back to Home',
                 onPressed: () => context.go('/home'),
               ),
-
               const SizedBox(height: AppSizes.p24),
             ],
           ),

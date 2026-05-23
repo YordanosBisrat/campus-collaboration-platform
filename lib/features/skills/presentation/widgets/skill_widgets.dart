@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
-import '../../models/skill_model.dart';
+import '../../data/models/skill_model.dart';
 
 //  Skill List Card
 

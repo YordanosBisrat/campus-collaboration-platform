@@ -1,50 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/widgets/app_dialogs.dart';
+import '../../../../core/database/app_database.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../widgets/skill_widgets.dart';
 
-class SkillRequestsScreen extends StatefulWidget {
+class SkillRequestsScreen extends ConsumerStatefulWidget {
   const SkillRequestsScreen({super.key});
 
   @override
-  State<SkillRequestsScreen> createState() => _SkillRequestsScreenState();
+  ConsumerState<SkillRequestsScreen> createState() =>
+      _SkillRequestsScreenState();
 }
 
-class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
-  final List<Map<String, String>> _requests = [
-    {'name': 'Solomon Elias', 'skill': 'Java Tutoring'},
-    {'name': 'Christian Elias', 'skill': 'UI Design Basics'},
-    {'name': 'Elias Bisrat', 'skill': 'Calculus Help'},
-    {'name': 'Ruth Tewodros', 'skill': 'Java Tutoring'},
-  ];
+class _SkillRequestsScreenState extends ConsumerState<SkillRequestsScreen> {
+  List<Map<String, dynamic>> _requests = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRequests();
+  }
+
+  Future<void> _loadRequests() async {
+    final user = ref.read(currentUserProvider);
+    if (user == null) {
+      setState(() => _loading = false);
+      return;
+    }
+
+    try {
+      final db = await AppDatabase.instance.database;
+      final rows = await db.rawQuery(
+        '''
+        SELECT sr.id, sr.requester_name, sr.skill_title, sr.status, sr.skill_id
+        FROM skill_requests sr
+        INNER JOIN skills s ON sr.skill_id = s.id
+        WHERE s.owner_id = ?
+        ORDER BY sr.created_at DESC
+      ''',
+        [user.id],
+      );
+
+      setState(() {
+        _requests = rows.map((r) => Map<String, dynamic>.from(r)).toList();
+        _loading = false;
+      });
+    } catch (_) {
+      setState(() => _loading = false);
+    }
+  }
 
   void _onAccept(int index) {
     setState(() => _requests.removeAt(index));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Request accepted!'),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    showSuccessSnackBar(context, 'Request accepted!');
   }
 
   void _onReject(int index) {
     setState(() => _requests.removeAt(index));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Request rejected.'),
-        backgroundColor: AppColors.textSecondary,
-      ),
-    );
+    showInfoSnackBar(context, 'Request rejected.');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -62,8 +86,11 @@ class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
         ),
         centerTitle: true,
       ),
-
-      body: _requests.isEmpty
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : _requests.isEmpty
           ? const Center(
               child: Text(
                 'No pending requests',
@@ -73,13 +100,13 @@ class _SkillRequestsScreenState extends State<SkillRequestsScreen> {
           : ListView.builder(
               padding: const EdgeInsets.all(AppSizes.p16),
               itemCount: _requests.length,
-              itemBuilder: (context, index) {
-                final request = _requests[index];
+              itemBuilder: (_, i) {
+                final req = _requests[i];
                 return SkillRequestCard(
-                  requesterName: request['name']!,
-                  skillRequested: request['skill']!,
-                  onAccept: () => _onAccept(index),
-                  onReject: () => _onReject(index),
+                  requesterName: req['requester_name'] as String,
+                  skillRequested: req['skill_title'] as String,
+                  onAccept: () => _onAccept(i),
+                  onReject: () => _onReject(i),
                 );
               },
             ),

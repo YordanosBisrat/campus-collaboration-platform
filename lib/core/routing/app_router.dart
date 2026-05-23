@@ -38,7 +38,7 @@ import '../../features/skills/presentation/screens/my_skills_screen.dart';
 import '../../features/skills/presentation/screens/skill_requests_screen.dart';
 import '../../features/skills/presentation/screens/skills_error_screen.dart';
 import '../../features/skills/presentation/screens/success_confirmation_screen.dart';
-import '../../features/skills/models/skill_model.dart';
+import '../../features/skills/data/models/skill_model.dart';
 
 // Shell
 import 'main_shell.dart';
@@ -185,9 +185,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.groupsError,
         builder: (_, _) => const GroupsErrorScreen(),
       ),
-      
 
-      
       // ── Profile sub-screens ────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.changePassword,

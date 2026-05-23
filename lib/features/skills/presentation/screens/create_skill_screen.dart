@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/app_dialogs.dart';
+import '../../data/models/skill_model.dart';
+import '../providers/skills_provider.dart';
 
-class CreateSkillScreen extends StatefulWidget {
+class CreateSkillScreen extends ConsumerStatefulWidget {
   const CreateSkillScreen({super.key});
 
   @override
-  State<CreateSkillScreen> createState() => _CreateSkillScreenState();
+  ConsumerState<CreateSkillScreen> createState() => _CreateSkillScreenState();
 }
 
-class _CreateSkillScreenState extends State<CreateSkillScreen> {
+class _CreateSkillScreenState extends ConsumerState<CreateSkillScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  final _titleCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
+  final _availCtrl = TextEditingController();
+  final _prereqCtrl = TextEditingController();
   String? _selectedCategory;
   bool _isLoading = false;
 
-  final List<String> _categories = [
+  SkillModel? _editSkill;
+  bool _editMode = false;
+
+  static const _categories = [
     'Programming',
     'Language',
     'Design',
@@ -30,13 +39,32 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
   ];
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final extra = GoRouterState.of(context).extra;
+    if (extra is SkillModel && !_editMode) {
+      _editSkill = extra;
+      _editMode = true;
+      _titleCtrl.text = extra.title;
+      _descCtrl.text = extra.description;
+      _availCtrl.text = extra.availability;
+      _prereqCtrl.text = extra.prerequisites;
+      _selectedCategory = _categories.contains(extra.category)
+          ? extra.category
+          : 'Programming';
+    }
+  }
+
+  @override
   void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
+    _titleCtrl.dispose();
+    _descCtrl.dispose();
+    _availCtrl.dispose();
+    _prereqCtrl.dispose();
     super.dispose();
   }
 
-  void _onPostSkill() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCategory == null) {
       ScaffoldMessenger.of(
@@ -47,19 +75,47 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
 
     setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
+    String? err;
+
+    if (_editMode && _editSkill != null) {
+      final updated = _editSkill!.copyWith(
+        title: _titleCtrl.text.trim(),
+        category: _selectedCategory!,
+        description: _descCtrl.text.trim(),
+        availability: _availCtrl.text.trim(),
+        prerequisites: _prereqCtrl.text.trim(),
+      );
+      err = await ref.read(skillsProvider.notifier).updateSkill(updated);
+    } else {
+      err = await ref
+          .read(skillsProvider.notifier)
+          .createSkill(
+            title: _titleCtrl.text.trim(),
+            category: _selectedCategory!,
+            description: _descCtrl.text.trim(),
+            availability: _availCtrl.text.trim(),
+            prerequisites: _prereqCtrl.text.trim(),
+          );
+    }
+
+    setState(() => _isLoading = false);
+    if (!mounted) return;
+
+    if (err == null) {
+      showSuccessSnackBar(
+        context,
+        _editMode ? 'Skill updated!' : 'Skill posted successfully!',
+      );
       context.pop();
-    });
+    } else {
+      showErrorSnackBar(context, err);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      //  App Bar
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -67,9 +123,9 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Create Skill',
-          style: TextStyle(
+        title: Text(
+          _editMode ? 'Edit Skill' : 'Create Skill',
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -77,7 +133,6 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
         ),
         centerTitle: false,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.p16),
         child: Form(
@@ -86,21 +141,15 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: AppSizes.p8),
-
-              //  Skill Title
               CustomTextField(
                 label: 'Skill Title',
                 hintText: 'e.g. Intro to Python Programming',
-                controller: _titleController,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a skill title';
-                  }
-                  return null;
-                },
+                controller: _titleCtrl,
+                prefixIcon: Icons.lightbulb_outline,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Please enter a skill title'
+                    : null,
               ),
-
-              //  Category Dropdown
               const Text(
                 'Category',
                 style: TextStyle(
@@ -139,60 +188,59 @@ class _CreateSkillScreenState extends State<CreateSkillScreen> {
                     ),
                     items: _categories
                         .map(
-                          (cat) => DropdownMenuItem(
-                            value: cat,
+                          (c) => DropdownMenuItem(
+                            value: c,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSizes.p16,
                               ),
                               child: Text(
-                                cat,
+                                c,
                                 style: const TextStyle(fontSize: 14),
                               ),
                             ),
                           ),
                         )
                         .toList(),
-                    onChanged: (val) => setState(() => _selectedCategory = val),
+                    onChanged: (v) => setState(() => _selectedCategory = v),
                   ),
                 ),
               ),
-
               const SizedBox(height: AppSizes.p16),
-
-              //  Description
               CustomTextField(
                 label: 'Description',
                 hintText:
-                    'Describe what you can teach or what help you are looking for. Include your availability and any prerequisites...',
-                controller: _descriptionController,
+                    'Describe what you can teach, your experience, and how you would teach it...',
+                controller: _descCtrl,
                 maxLines: 5,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Please enter a description'
+                    : null,
               ),
-
+              CustomTextField(
+                label: 'Availability',
+                hintText: 'e.g. Tuesdays and Thursdays: 4–6 PM',
+                controller: _availCtrl,
+                prefixIcon: Icons.access_time_outlined,
+              ),
+              CustomTextField(
+                label: 'Prerequisites (optional)',
+                hintText: 'e.g. Basic Java syntax, Calculus I',
+                controller: _prereqCtrl,
+                maxLines: 2,
+              ),
               const SizedBox(height: AppSizes.p24),
-
-              //  Post Skill button
               CustomButton(
-                text: 'Post Skill',
-                onPressed: _onPostSkill,
+                text: _editMode ? 'Save Changes' : 'Post Skill',
+                onPressed: _isLoading ? null : _submit,
                 isLoading: _isLoading,
               ),
-
               const SizedBox(height: AppSizes.p12),
-
-              //  Cancel
               CustomButton(
                 text: 'Cancel',
                 isPrimary: false,
                 onPressed: () => context.pop(),
               ),
-
               const SizedBox(height: AppSizes.p24),
             ],
           ),
