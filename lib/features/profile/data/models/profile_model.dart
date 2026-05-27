@@ -17,7 +17,7 @@ class ProfileModel extends ProfileEntity {
       email: map['email'] as String,
       bio: map['bio'] as String? ?? '',
       avatarPath: map['avatar_path'] as String? ?? '',
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
     );
   }
 
@@ -27,7 +27,7 @@ class ProfileModel extends ProfileEntity {
     'email': email,
     'bio': bio,
     'avatar_path': avatarPath,
-    'created_at': createdAt.toIso8601String(),
+    'created_at': createdAt.millisecondsSinceEpoch,
   };
 
   factory ProfileModel.fromEntity(ProfileEntity entity) => ProfileModel(
