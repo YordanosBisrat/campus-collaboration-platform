@@ -7,7 +7,8 @@ class HomeLocalDatasource {
   Future<List<ActivityModel>> getRecentActivity(String userId) async {
     try {
       final db = await _db.database;
-      final skillRequests = await db.rawQuery('''
+      final skillRequests = await db.rawQuery(
+        '''
         SELECT 
           sr.id,
           'Skill request from ' || u.full_name AS title,
@@ -20,12 +21,15 @@ class HomeLocalDatasource {
         WHERE s.owner_id = ?
         ORDER BY sr.created_at DESC
         LIMIT 5
-      ''', [userId]);
+      ''',
+        [userId],
+      );
 
-      final groupActivity = await db.rawQuery('''
+      final groupActivity = await db.rawQuery(
+        '''
         SELECT 
           gm.id,
-          'New message in ' || sg.title AS title,
+          'New message in ' || sg.name AS title,
           sg.topic AS subtitle,
           'message' AS type,
           gm.joined_at AS created_at
@@ -34,11 +38,14 @@ class HomeLocalDatasource {
         WHERE gm.user_id = ?
         ORDER BY gm.joined_at DESC
         LIMIT 5
-      ''', [userId]);
+      ''',
+        [userId],
+      );
 
       final combined = [...skillRequests, ...groupActivity];
-      combined.sort((a, b) => (b['created_at'] as String)
-          .compareTo(a['created_at'] as String));
+      combined.sort(
+        (a, b) => (b['created_at'] as int).compareTo(a['created_at'] as int),
+      );
 
       return combined.map((m) => ActivityModel.fromMap(m)).toList();
     } catch (_) {
