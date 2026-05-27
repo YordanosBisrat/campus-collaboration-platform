@@ -1,26 +1,17 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'app_database.dart';
 
-class AppDatabase {
-  AppDatabase._();
-  static final AppDatabase instance = AppDatabase._();
+class SqliteHelper {
+  SqliteHelper._();
+  static final SqliteHelper instance = SqliteHelper._();
 
-  Database? _db;
+  Future<void> init() async => AppDatabase.instance.init();
 
-  Future<Database> get database async {
-    _db ??= await _open();
-    return _db!;
-  }
-
-  Future<void> init() async => await database;
-
-  Future<void> clearSession() async {
-    final db = await database;
-    await db.delete('session');
-  }
+  Future<void> clearSession() async => AppDatabase.instance.clearSession();
 
   Future<void> deleteAllData() async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     await db.delete('session');
     await db.delete('users');
     await db.delete('skills');
@@ -34,7 +25,7 @@ class AppDatabase {
     Map<String, dynamic> values, {
     ConflictAlgorithm conflictAlgorithm = ConflictAlgorithm.replace,
   }) async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     return db.insert(table, values, conflictAlgorithm: conflictAlgorithm);
   }
 
@@ -44,7 +35,7 @@ class AppDatabase {
     required String where,
     required List<dynamic> whereArgs,
   }) async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     return db.update(table, values, where: where, whereArgs: whereArgs);
   }
 
@@ -53,7 +44,7 @@ class AppDatabase {
     String? where,
     List<dynamic>? whereArgs,
   }) async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     return db.delete(table, where: where, whereArgs: whereArgs);
   }
 
@@ -65,7 +56,7 @@ class AppDatabase {
     String? orderBy,
     int? limit,
   }) async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     return db.query(
       table,
       columns: columns,
@@ -76,12 +67,11 @@ class AppDatabase {
     );
   }
 
-  /// Run a raw SELECT; useful for JOINs.
   Future<List<Map<String, dynamic>>> rawQuery(
     String sql, [
     List<dynamic>? args,
   ]) async {
-    final db = await database;
+    final db = await AppDatabase.instance.database;
     return db.rawQuery(sql, args);
   }
 
