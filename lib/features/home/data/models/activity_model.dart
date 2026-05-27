@@ -15,23 +15,23 @@ class ActivityModel extends ActivityEntity {
       title: map['title'] as String,
       subtitle: map['subtitle'] as String? ?? '',
       type: map['type'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
     );
   }
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'title': title,
-        'subtitle': subtitle,
-        'type': type,
-        'created_at': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'subtitle': subtitle,
+    'type': type,
+    'created_at': createdAt.millisecondsSinceEpoch,
+  };
 
   factory ActivityModel.fromEntity(ActivityEntity entity) => ActivityModel(
-        id: entity.id,
-        title: entity.title,
-        subtitle: entity.subtitle,
-        type: entity.type,
-        createdAt: entity.createdAt,
-      );
+    id: entity.id,
+    title: entity.title,
+    subtitle: entity.subtitle,
+    type: entity.type,
+    createdAt: entity.createdAt,
+  );
 }
