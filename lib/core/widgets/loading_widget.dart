@@ -98,7 +98,7 @@ class _ShimmerCardState extends State<ShimmerCard>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _anim,
-      builder: (_, _) => Opacity(
+      builder: (context, child) => Opacity(
         opacity: _anim.value,
         child: Container(
           height: widget.height,
