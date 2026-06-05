@@ -130,7 +130,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ── Shell: tabs with bottom nav (PROTECTED) ────────────────────────
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
-        builder: (_, _, child) => MainShell(child: child),
+        builder: (context, state, child) => MainShell(child: child),
         routes: [
           GoRoute(path: AppRoutes.home, builder: (_, _) => const HomeScreen()),
           GoRoute(
