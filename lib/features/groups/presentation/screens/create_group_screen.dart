@@ -1,16 +1,25 @@
+// lib/features/groups/presentation/screens/create_group_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/app_dialogs.dart';
 import '../providers/groups_provider.dart';
 
 class CreateGroupScreen extends ConsumerStatefulWidget {
   const CreateGroupScreen({super.key});
 
   @override
-  ConsumerState<CreateGroupScreen> createState() => _CreateGroupScreenState();
+  ConsumerState<CreateGroupScreen> createState() =>
+      _CreateGroupScreenState();
 }
 
-class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
+class _CreateGroupScreenState
+    extends ConsumerState<CreateGroupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _topicCtrl = TextEditingController();
@@ -39,51 +48,99 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     setState(() => _isLoading = false);
 
     if (err == null) {
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
+      showSuccessSnackBar(context, 'Group created successfully!');
+      context.pop();
     } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(err)),
-        );
-      }
+      showErrorSnackBar(context, err);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Group')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: AppColors.background,
+
+      // ── App Bar ──────────────────────────────────────────────────────
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 20, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Create Group',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSizes.p16),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
+              const SizedBox(height: AppSizes.p8),
+
+              // ── Group Name ─────────────────────────────────────────
+              CustomTextField(
+                label: 'Group Name',
+                hintText: 'Enter group name',
                 controller: _nameCtrl,
-                decoration: const InputDecoration(labelText: 'Group name'),
-                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Group name is required'
+                    : null,
               ),
-              const SizedBox(height: 8),
-              TextFormField(
+
+              // ── Topic ──────────────────────────────────────────────
+              CustomTextField(
+                label: 'Topic',
+                hintText: 'e.g. Mathematics, Programming',
                 controller: _topicCtrl,
-                decoration: const InputDecoration(labelText: 'Topic'),
-                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Topic is required'
+                    : null,
               ),
-              const SizedBox(height: 8),
-              TextFormField(
+
+              // ── Description ────────────────────────────────────────
+              CustomTextField(
+                label: 'Description',
+                hintText:
+                    'Describe the purpose and goals of the study group...',
                 controller: _descCtrl,
-                decoration: const InputDecoration(labelText: 'Description'),
-                maxLines: 4,
-                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                maxLines: 5,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Description is required'
+                    : null,
               ),
-              const SizedBox(height: 16),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _submit, child: const Text('Create Group')),
+
+              const SizedBox(height: AppSizes.p24),
+
+              // ── Create button ──────────────────────────────────────
+              CustomButton(
+                text: 'Create Group',
+                isPrimary: true,
+                isLoading: _isLoading,
+                onPressed: _isLoading ? null : _submit,
+              ),
+
+              const SizedBox(height: AppSizes.p12),
+
+              // ── Cancel ─────────────────────────────────────────────
+              CustomButton(
+                text: 'Cancel',
+                isPrimary: false,
+                onPressed: () => context.pop(),
+              ),
+
+              const SizedBox(height: AppSizes.p24),
             ],
           ),
         ),
