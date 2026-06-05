@@ -1,45 +1,45 @@
+// lib/features/auth/data/datasources/auth_remote_datasource.dart
+//
+// Mock remote datasource — uses the shared MockApiClient from core/
+// In production: replace MockApiClient calls with real HTTP (http/dio package)
 
-/// Mock remote datasource.
-/// In production: replace method bodies with real HTTP calls.
-/// Called by AuthRepositoryImpl ONLY on cache miss.
+import '../../../../core/network/api_client.dart';
+
 class AuthRemoteDatasource {
-  /// Simulate network latency
-  Future<void> _delay() =>
-      Future.delayed(const Duration(milliseconds: 600));
+  final MockApiClient _api = MockApiClient.instance;
 
-  /// Mock: "register" user on remote server.
-  /// Returns a fake server-assigned ID (in real app: server returns user JSON).
+  /// Mock register — simulates POST /api/auth/register
   Future<Map<String, dynamic>> registerUser({
     required String fullName,
     required String email,
     required String passwordHash,
   }) async {
-    await _delay();
-    // Mock success — real app: POST /api/auth/register
-    return {
-      'success': true,
-      'message': 'User registered successfully',
-    };
+    final response = await _api.register(
+      fullName: fullName,
+      email: email,
+      passwordHash: passwordHash,
+    );
+    if (!response.success) {
+      throw response.error ?? 'Registration failed.';
+    }
+    return response.data ?? {};
   }
 
-  /// Mock: "login" on remote server.
-  /// In real app: POST /api/auth/login → returns JWT token + user data.
+  /// Mock login — simulates POST /api/auth/login
   Future<Map<String, dynamic>> loginUser({
     required String email,
     required String password,
   }) async {
-    await _delay();
-    // Mock success — real app: POST /api/auth/login
-    return {
-      'success': true,
-      'message': 'Login successful',
-    };
+    final response = await _api.login(email: email, password: password);
+    if (!response.success) {
+      throw response.error ?? 'Login failed.';
+    }
+    return response.data ?? {};
   }
 
-  /// Mock: send password reset email.
-  /// Real app: POST /api/auth/forgot-password
+  /// Mock forgot password — simulates POST /api/auth/forgot-password
   Future<void> requestPasswordReset(String email) async {
-    await _delay();
-    // No-op for mock
+    await _api.requestPasswordReset(email);
+    // Always silent — never reveal if email exists (security best practice)
   }
 }
