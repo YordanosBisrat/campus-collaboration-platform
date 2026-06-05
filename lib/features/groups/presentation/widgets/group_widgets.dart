@@ -1,9 +1,13 @@
+// lib/features/groups/presentation/widgets/group_widgets.dart
+
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
-import '../../models/group_model.dart';
+// FIX: import from domain entity, NOT old UI mock model
+import '../../domain/entities/group_entity.dart';
 
-// Topic Tag
+// ── Topic Tag ─────────────────────────────────────────────────────────────────
+
 class TopicTag extends StatelessWidget {
   final String label;
   const TopicTag({super.key, required this.label});
@@ -19,7 +23,7 @@ class TopicTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.bookmark_border_rounded,
             size: 13,
             color: AppColors.primary,
@@ -27,7 +31,7 @@ class TopicTag extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: AppColors.primary,
@@ -39,7 +43,8 @@ class TopicTag extends StatelessWidget {
   }
 }
 
-// Member Count Chip
+// ── Member Count Chip ─────────────────────────────────────────────────────────
+
 class MemberCountChip extends StatelessWidget {
   final int count;
   const MemberCountChip({super.key, required this.count});
@@ -55,11 +60,15 @@ class MemberCountChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.group_outlined, size: 15, color: AppColors.textSecondary),
+          const Icon(
+            Icons.group_outlined,
+            size: 15,
+            color: AppColors.textSecondary,
+          ),
           const SizedBox(width: 4),
           Text(
             '$count',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -71,7 +80,8 @@ class MemberCountChip extends StatelessWidget {
   }
 }
 
-// Member Avatar
+// ── Member Avatar ─────────────────────────────────────────────────────────────
+
 class MemberAvatar extends StatelessWidget {
   final String name;
   final double radius;
@@ -108,9 +118,11 @@ class MemberAvatar extends StatelessWidget {
   }
 }
 
-// Member Row
+// ── Member Row ────────────────────────────────────────────────────────────────
+// FIX: now uses GroupMemberEntity from domain layer (not GroupViewMember)
+
 class MemberRow extends StatelessWidget {
-  final GroupViewMember member;
+  final GroupMemberEntity member;
   const MemberRow({super.key, required this.member});
 
   @override
@@ -124,16 +136,15 @@ class MemberRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          MemberAvatar(name: member.name),
+          MemberAvatar(name: member.userName),
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  member.name,
-                  style: TextStyle(
+                  member.userName,
+                  style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: AppColors.textPrimary,
@@ -141,8 +152,8 @@ class MemberRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  member.field,
-                  style: TextStyle(
+                  member.userField,
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
@@ -150,10 +161,8 @@ class MemberRow extends StatelessWidget {
               ],
             ),
           ),
-
-          // Role indicator
           isAdmin
-              ? Text(
+              ? const Text(
                   'Admin',
                   style: TextStyle(
                     fontSize: 13,
@@ -170,7 +179,7 @@ class MemberRow extends StatelessWidget {
                     color: Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Member',
                     style: TextStyle(
                       fontSize: 13,
