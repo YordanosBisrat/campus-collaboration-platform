@@ -1,5 +1,3 @@
-// lib/features/groups/data/repositories/groups_repository_impl.dart
-
 import '../../domain/entities/group_entity.dart';
 import '../../domain/repositories/group_repository.dart';
 import '../datasources/group_local_datasource.dart';
@@ -11,8 +9,6 @@ class GroupRepositoryImpl implements GroupRepository {
   final GroupRemoteDatasource remote;
 
   const GroupRepositoryImpl({required this.local, required this.remote});
-
-  // ── Helper: enrich GroupModel with memberIds from group_members ───────────
 
   Future<GroupEntity> _enrichGroup(GroupModel model) async {
     final members = await local.getGroupMembers(model.id);
@@ -28,26 +24,20 @@ class GroupRepositoryImpl implements GroupRepository {
     return result;
   }
 
-  // ── Read ──────────────────────────────────────────────────────────────────
-
   @override
   Future<List<GroupEntity>> getAllGroups() async {
-    final cached = await local.getAllGroups();
-    if (cached.isNotEmpty) return _enrichGroups(cached);
     try {
       final remoteGroups = await remote.fetchAllGroups();
       await local.cacheGroups(remoteGroups);
       return _enrichGroups(remoteGroups);
     } catch (_) {
-      return [];
+      final cached = await local.getAllGroups();
+      return _enrichGroups(cached);
     }
   }
 
   @override
   Future<List<GroupEntity>> getMyGroups(String userId) async {
-    final cached = await local.getMyGroups(userId);
-    if (cached.isNotEmpty) return _enrichGroups(cached);
-
     try {
       final remoteGroups = await remote.fetchAllGroups();
       await local.cacheGroups(remoteGroups);
@@ -70,14 +60,13 @@ class GroupRepositoryImpl implements GroupRepository {
 
       return _enrichGroups(myGroups);
     } catch (_) {
-      return [];
+      final cached = await local.getMyGroups(userId);
+      return _enrichGroups(cached);
     }
   }
 
   @override
   Future<GroupEntity?> getGroupById(String groupId) async {
-    final cached = await local.getGroupById(groupId);
-    if (cached != null) return _enrichGroup(cached);
     try {
       final found = await remote.fetchGroupById(groupId);
       if (found != null) {
@@ -85,23 +74,22 @@ class GroupRepositoryImpl implements GroupRepository {
         return _enrichGroup(found);
       }
     } catch (_) {}
+    final cached = await local.getGroupById(groupId);
+    if (cached != null) return _enrichGroup(cached);
     return null;
   }
 
   @override
   Future<List<GroupMemberEntity>> getGroupMembers(String groupId) async {
-    final cached = await local.getGroupMembers(groupId);
-    if (cached.isNotEmpty) return cached.map((m) => m.toEntity()).toList();
     try {
       final remoteMembers = await remote.fetchGroupMembers(groupId);
       await local.cacheMembers(remoteMembers);
       return remoteMembers.map((m) => m.toEntity()).toList();
     } catch (_) {
-      return [];
+      final cached = await local.getGroupMembers(groupId);
+      return cached.map((m) => m.toEntity()).toList();
     }
   }
-
-  // ── Create ────────────────────────────────────────────────────────────────
 
   @override
   Future<GroupEntity> createGroup({
@@ -134,8 +122,6 @@ class GroupRepositoryImpl implements GroupRepository {
     return group.toEntity(memberIds: [creatorId]);
   }
 
-  // ── Update ────────────────────────────────────────────────────────────────
-
   @override
   Future<GroupEntity> updateGroup({
     required String groupId,
@@ -153,15 +139,11 @@ class GroupRepositoryImpl implements GroupRepository {
     return _enrichGroup(updated);
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────
-
   @override
   Future<void> deleteGroup(String groupId) async {
     await remote.deleteGroup(groupId);
     await local.deleteGroup(groupId);
   }
-
-  // ── Join ──────────────────────────────────────────────────────────────────
 
   @override
   Future<void> joinGroup({
@@ -180,8 +162,6 @@ class GroupRepositoryImpl implements GroupRepository {
     await local.updateMemberCount(groupId, 1);
   }
 
-  // ── Leave ─────────────────────────────────────────────────────────────────
-
   @override
   Future<void> leaveGroup({
     required String groupId,
@@ -192,13 +172,8 @@ class GroupRepositoryImpl implements GroupRepository {
     await local.updateMemberCount(groupId, -1);
   }
 
-  // ── Membership ────────────────────────────────────────────────────────────
-
   @override
-  Future<bool> isMember({
-    required String groupId,
-    required String userId,
-  }) {
+  Future<bool> isMember({required String groupId, required String userId}) {
     return local.isMember(groupId: groupId, userId: userId);
   }
 }

@@ -291,10 +291,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusSmall),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              ref.read(authProvider.notifier).logout();
-              context.go('/');
+              final user = ref.read(currentUserProvider);
+              if (user != null) {
+                await ref.read(authProvider.notifier).deleteAccount(user.id);
+              }
+              if (context.mounted) context.go('/');
             },
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),

@@ -7,14 +7,8 @@ import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../models/user_model.dart';
+import 'package:campus_collaboration_app/core/network/token_storage.dart';
 
-/// Concrete implementation of [AuthRepository].
-///
-/// Strategy (cache-first):
-/// 1. Check SQLite local cache first
-/// 2. On cache miss → call remote datasource
-/// 3. Persist remote result to local cache
-/// 4. Return domain entity
 class AuthRepositoryImpl implements AuthRepository {
   final AuthLocalDatasource _local;
   final AuthRemoteDatasource _remote;
@@ -23,25 +17,18 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required AuthLocalDatasource local,
     required AuthRemoteDatasource remote,
-  })  : _local = local,
-        _remote = remote;
-
-  // ── Hash helper ───────────────────────────────────────────────────────
+  }) : _local = local,
+       _remote = remote;
 
   String _hash(String password) {
     final bytes = utf8.encode(password);
     return sha256.convert(bytes).toString();
   }
 
-  // ── getCurrentUser ────────────────────────────────────────────────────
-
   @override
   Future<UserEntity?> getCurrentUser() async {
-    // Always check local cache — session table
     return _local.getSessionUser();
   }
-
-  // ── signUp ────────────────────────────────────────────────────────────
 
   @override
   Future<UserEntity> signUp({
@@ -51,47 +38,28 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     final normalizedEmail = email.toLowerCase().trim();
 
-    // 1. Cache check — email already registered?
-    final existing = await _local.getUserByEmail(normalizedEmail);
-    if (existing != null) {
-      throw 'An account with this email already exists.';
-    }
-
-    // 2. Validate university email
-    if (!normalizedEmail.contains('.edu') &&
-        !normalizedEmail.contains('@university') &&
-        !normalizedEmail.contains('@aau')) {
-      throw 'Please use a valid university email address.';
-    }
-
-    final passwordHash = _hash(password);
-
-    // 3. Cache miss → call remote (mock)
-    await _remote.registerUser(
+    final response = await _remote.registerUser(
       fullName: fullName.trim(),
       email: normalizedEmail,
-      passwordHash: passwordHash,
+      passwordHash: password,
     );
 
-    // 4. Build model and save to local cache
+    final token = response['token'] as String?;
+    if (token != null) TokenStorage.saveToken(token);
+
+    final userData = response['user'] as Map<String, dynamic>;
     final user = UserModel(
-      id: _uuid.v4(),
-      fullName: fullName.trim(),
-      email: normalizedEmail,
-      bio: '',
+      id: userData['id'] as String,
+      fullName: userData['fullName'] as String,
+      email: userData['email'] as String,
+      bio: userData['bio'] as String? ?? '',
       avatarPath: '',
       createdAt: DateTime.now(),
     );
 
-    await _local.insertUser(user, passwordHash);
-
-    // 5. Save session
     await _local.saveSession(user);
-
     return user;
   }
-
-  // ── login ─────────────────────────────────────────────────────────────
 
   @override
   Future<UserEntity> login({
@@ -100,45 +68,38 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     final normalizedEmail = email.toLowerCase().trim();
 
-    // 1. Cache check — find user by email
-    final cached = await _local.getUserByEmail(normalizedEmail);
+    final response = await _remote.loginUser(
+      email: normalizedEmail,
+      password: password,
+    );
 
-    if (cached == null) {
-      // 2. Cache miss → try remote (mock: user not found)
-      await _remote.loginUser(
-          email: normalizedEmail, password: password);
-      // Still no user locally — treat as not registered
-      throw 'No account found with this email address.';
-    }
+    final token = response['token'] as String?;
+    if (token != null) TokenStorage.saveToken(token);
 
-    // 3. Cache hit — verify password locally
-    final storedHash = await _local.getPasswordHash(cached.id);
-    if (storedHash != _hash(password)) {
-      throw 'Incorrect password. Please try again.';
-    }
+    final userData = response['user'] as Map<String, dynamic>;
+    final user = UserModel(
+      id: userData['id'] as String,
+      fullName: userData['fullName'] as String,
+      email: userData['email'] as String,
+      bio: userData['bio'] as String? ?? '',
+      avatarPath: '',
+      createdAt: DateTime.now(),
+    );
 
-    // 4. Save session
-    await _local.saveSession(cached);
-
-    return cached;
+    await _local.saveSession(user);
+    return user;
   }
-
-  // ── logout ────────────────────────────────────────────────────────────
 
   @override
   Future<void> logout() async {
+    TokenStorage.clearToken();
     await _local.clearSession();
   }
 
-  // ── sendPasswordResetEmail ────────────────────────────────────────────
-
   @override
   Future<void> sendPasswordResetEmail(String email) async {
-    // Always succeeds silently (security: don't reveal if email exists)
     await _remote.requestPasswordReset(email.toLowerCase().trim());
   }
-
-  // ── changePassword ────────────────────────────────────────────────────
 
   @override
   Future<void> changePassword({
@@ -146,15 +107,11 @@ class AuthRepositoryImpl implements AuthRepository {
     required String currentPassword,
     required String newPassword,
   }) async {
-    final storedHash = await _local.getPasswordHash(userId);
-    if (storedHash == null) throw 'User not found.';
-    if (storedHash != _hash(currentPassword)) {
-      throw 'Current password is incorrect.';
-    }
-    await _local.updatePasswordHash(userId, _hash(newPassword));
+    await _remote.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
   }
-
-  // ── updateProfile ─────────────────────────────────────────────────────
 
   @override
   Future<UserEntity> updateProfile({
@@ -163,5 +120,12 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
   }) async {
     return _local.updateProfile(userId, fullName, email);
+  }
+
+  @override
+  Future<void> deleteAccount(String userId) async {
+    await _remote.deleteAccount();
+    await _local.clearSession();
+    TokenStorage.clearToken();
   }
 }

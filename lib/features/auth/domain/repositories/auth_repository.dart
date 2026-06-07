@@ -14,10 +14,7 @@ abstract class AuthRepository {
   });
 
   /// Log in an existing user. Throws [String] message on failure.
-  Future<UserEntity> login({
-    required String email,
-    required String password,
-  });
+  Future<UserEntity> login({required String email, required String password});
 
   /// Log out and clear session.
   Future<void> logout();
@@ -38,4 +35,7 @@ abstract class AuthRepository {
     required String fullName,
     required String email,
   });
+
+  /// Delete account permanently.
+  Future<void> deleteAccount(String userId);
 }
