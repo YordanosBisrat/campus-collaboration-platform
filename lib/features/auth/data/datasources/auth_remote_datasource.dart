@@ -1,45 +1,51 @@
-// lib/features/auth/data/datasources/auth_remote_datasource.dart
-//
-// Mock remote datasource — uses the shared MockApiClient from core/
-// In production: replace MockApiClient calls with real HTTP (http/dio package)
-
-import '../../../../core/network/api_client.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AuthRemoteDatasource {
-  final MockApiClient _api = MockApiClient.instance;
+  static const String _base = 'http://10.0.2.2:3000';
 
-  /// Mock register — simulates POST /api/auth/register
   Future<Map<String, dynamic>> registerUser({
     required String fullName,
     required String email,
     required String passwordHash,
   }) async {
-    final response = await _api.register(
-      fullName: fullName,
-      email: email,
-      passwordHash: passwordHash,
+    final res = await http.post(
+      Uri.parse('$_base/auth/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'fullName': fullName,
+        'email': email,
+        'password': passwordHash,
+      }),
     );
-    if (!response.success) {
-      throw response.error ?? 'Registration failed.';
+    if (res.statusCode != 201) {
+      final err = jsonDecode(res.body);
+      throw err['error'] ?? 'Registration failed.';
     }
-    return response.data ?? {};
+    return jsonDecode(res.body);
   }
 
-  /// Mock login — simulates POST /api/auth/login
   Future<Map<String, dynamic>> loginUser({
     required String email,
     required String password,
   }) async {
-    final response = await _api.login(email: email, password: password);
-    if (!response.success) {
-      throw response.error ?? 'Login failed.';
+    final res = await http.post(
+      Uri.parse('$_base/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+    if (res.statusCode != 200) {
+      final err = jsonDecode(res.body);
+      throw err['error'] ?? 'Login failed.';
     }
-    return response.data ?? {};
+    return jsonDecode(res.body);
   }
 
-  /// Mock forgot password — simulates POST /api/auth/forgot-password
   Future<void> requestPasswordReset(String email) async {
-    await _api.requestPasswordReset(email);
-    // Always silent — never reveal if email exists (security best practice)
+    await http.post(
+      Uri.parse('$_base/auth/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
   }
 }
