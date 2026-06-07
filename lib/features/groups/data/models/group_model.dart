@@ -1,14 +1,4 @@
-// lib/features/groups/models/group_model.dart
-// IMPORTANT: This file must stay at this path.
-// app_router.dart imports from '../../features/groups/models/group_model.dart'
-//
-// Matches the exact SQLite schema from app_database.dart:
-//   study_groups: id, name, topic, description, creator_id, member_count, created_at (INTEGER)
-//   group_members: id, group_id, user_id, user_name, user_field, role, joined_at (INTEGER)
-
 import 'package:campus_collaboration_app/features/groups/domain/entities/group_entity.dart';
-
-// ── Group Model ───────────────────────────────────────────────────────────────
 
 class GroupModel {
   final String id;
@@ -17,7 +7,7 @@ class GroupModel {
   final String description;
   final String creatorId;
   final int memberCount;
-  final int createdAt; // Unix timestamp (milliseconds) — matches INTEGER column
+  final int createdAt;
 
   const GroupModel({
     required this.id,
@@ -29,8 +19,6 @@ class GroupModel {
     required this.createdAt,
   });
 
-  // ── SQLite ────────────────────────────────────────────────────────────────
-
   factory GroupModel.fromMap(Map<String, dynamic> map) {
     return GroupModel(
       id: map['id'] as String,
@@ -40,6 +28,18 @@ class GroupModel {
       creatorId: map['creator_id'] as String,
       memberCount: map['member_count'] as int,
       createdAt: map['created_at'] as int,
+    );
+  }
+
+  factory GroupModel.fromJson(Map<String, dynamic> json) {
+    return GroupModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      topic: json['topic'] as String,
+      description: json['description'] as String,
+      creatorId: json['creatorId'] as String,
+      memberCount: json['memberCount'] as int,
+      createdAt: json['createdAt'] as int,
     );
   }
 
@@ -54,8 +54,6 @@ class GroupModel {
       'created_at': createdAt,
     };
   }
-
-  // ── Entity conversion ─────────────────────────────────────────────────────
 
   GroupEntity toEntity({List<String> memberIds = const []}) {
     return GroupEntity(
@@ -100,16 +98,14 @@ class GroupModel {
   }
 }
 
-// ── Group Member Model ────────────────────────────────────────────────────────
-
 class GroupMemberModel {
   final String id;
   final String groupId;
   final String userId;
   final String userName;
   final String userField;
-  final String role; // 'admin' | 'member'
-  final int joinedAt; // Unix timestamp
+  final String role;
+  final int joinedAt;
 
   const GroupMemberModel({
     required this.id,
@@ -130,6 +126,20 @@ class GroupMemberModel {
       userField: map['user_field'] as String,
       role: map['role'] as String,
       joinedAt: map['joined_at'] as int,
+    );
+  }
+
+  factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
+    return GroupMemberModel(
+      id: json['id'] as String,
+      groupId: json['group_id'] as String? ?? json['groupId'] as String? ?? '',
+      userId: json['user_id'] as String? ?? json['userId'] as String? ?? '',
+      userName:
+          json['user_name'] as String? ?? json['userName'] as String? ?? '',
+      userField:
+          json['user_field'] as String? ?? json['userField'] as String? ?? '',
+      role: json['role'] as String,
+      joinedAt: json['joined_at'] as int? ?? json['joinedAt'] as int? ?? 0,
     );
   }
 
