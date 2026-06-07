@@ -16,14 +16,12 @@ class SkillsRepositoryImpl implements SkillsRepository {
 
   @override
   Future<List<SkillEntity>> getSkills() async {
-    final cached = await local.getAllSkills();
-    if (cached.isNotEmpty) return cached;
     try {
       final fromRemote = await remote.fetchAllSkills();
-      if (fromRemote.isNotEmpty) await local.cacheSkills(fromRemote);
+      await local.cacheSkills(fromRemote);
       return fromRemote;
     } catch (_) {
-      return [];
+      return local.getAllSkills();
     }
   }
 
@@ -65,15 +63,9 @@ class SkillsRepositoryImpl implements SkillsRepository {
       ),
     );
 
-    // Save locally first (offline-first)
-    await local.insertSkill(skill);
-
-    // Fire-and-forget to mock remote
-    try {
-      await remote.createSkill(skill);
-    } catch (_) {}
-
-    return skill;
+    final created = await remote.createSkill(skill);
+    await local.insertSkill(created);
+    return created;
   }
 
   // ── Update ────────────────────────────────────────────────────────────────
@@ -81,21 +73,17 @@ class SkillsRepositoryImpl implements SkillsRepository {
   @override
   Future<SkillEntity> updateSkill(SkillEntity skill) async {
     final model = SkillModel.fromEntity(skill);
-    await local.updateSkill(model);
-    try {
-      await remote.updateSkill(model);
-    } catch (_) {}
-    return skill;
+    final updated = await remote.updateSkill(model);
+    await local.updateSkill(updated);
+    return updated;
   }
 
   // ── Delete ────────────────────────────────────────────────────────────────
 
   @override
   Future<void> deleteSkill(String id) async {
+    await remote.deleteSkill(id);
     await local.deleteSkill(id);
-    try {
-      await remote.deleteSkill(id);
-    } catch (_) {}
   }
 
   // ── Request ───────────────────────────────────────────────────────────────
@@ -107,9 +95,7 @@ class SkillsRepositoryImpl implements SkillsRepository {
     required String requesterId,
     required String requesterName,
   }) async {
-    final already = await local.hasRequested(skillId, requesterId);
-    if (already) throw Exception('You have already requested this skill.');
-
+    await remote.requestSkill(skillId: skillId, requesterId: requesterId);
     await local.insertSkillRequest(
       id: _uuid.v4(),
       skillId: skillId,
@@ -117,10 +103,6 @@ class SkillsRepositoryImpl implements SkillsRepository {
       requesterId: requesterId,
       requesterName: requesterName,
     );
-
-    try {
-      await remote.requestSkill(skillId: skillId, requesterId: requesterId);
-    } catch (_) {}
   }
 
   @override
