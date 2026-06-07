@@ -43,6 +43,27 @@ class SkillModel extends SkillEntity {
     );
   }
 
+  // ── API (JSON) ──────────────────────────────────────────────────────────
+
+  factory SkillModel.fromJson(Map<String, dynamic> json) {
+    final cat = json['category'] as String? ?? '';
+    final colors = _colorsForCategory(cat);
+    return SkillModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      category: cat,
+      description: json['description'] as String,
+      ownerId: json['ownerId'] as String,
+      ownerName: json['ownerName'] as String,
+      ownerYear: json['ownerYear'] as String? ?? '',
+      availability: json['availability'] as String? ?? '',
+      prerequisites: json['prerequisites'] as String? ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int),
+      categoryColor: colors.$1,
+      categoryTextColor: colors.$2,
+    );
+  }
+
   Map<String, dynamic> toMap() => {
     'id': id,
     'title': title,
