@@ -1,46 +1,58 @@
-import 'package:uuid/uuid.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/skill_model.dart';
 
-/// Mock remote datasource — mirrors GroupRemoteDatasource pattern.
-/// Replace method bodies with real HTTP calls when backend is ready.
 class SkillsRemoteDatasource {
-  final _uuid = const Uuid();
-
-  Future<void> get _delay => Future.delayed(const Duration(milliseconds: 350));
-
-  // In-memory store simulating a remote database
-  final List<SkillModel> _skills = [];
+  static const String _base = 'http://10.0.2.2:3000';
 
   Future<List<SkillModel>> fetchAllSkills() async {
-    await _delay;
-    return List.unmodifiable(_skills);
+    final res = await http.get(Uri.parse('$_base/skills'));
+    if (res.statusCode != 200) throw Exception('Failed to fetch skills');
+    final List data = jsonDecode(res.body);
+    return data.map((e) => SkillModel.fromJson(e)).toList();
   }
 
   Future<SkillModel> createSkill(SkillModel skill) async {
-    await _delay;
-    _skills.add(skill);
-    return skill;
+    final res = await http.post(
+      Uri.parse('$_base/skills'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'title': skill.title,
+        'category': skill.category,
+        'description': skill.description,
+        'availability': skill.availability,
+        'prerequisites': skill.prerequisites,
+      }),
+    );
+    if (res.statusCode != 201) throw Exception('Failed to create skill');
+    return SkillModel.fromJson(jsonDecode(res.body));
   }
 
   Future<SkillModel> updateSkill(SkillModel skill) async {
-    await _delay;
-    final i = _skills.indexWhere((s) => s.id == skill.id);
-    if (i != -1) _skills[i] = skill;
-    return skill;
+    final res = await http.put(
+      Uri.parse('$_base/skills/${skill.id}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'title': skill.title,
+        'category': skill.category,
+        'description': skill.description,
+        'availability': skill.availability,
+        'prerequisites': skill.prerequisites,
+      }),
+    );
+    if (res.statusCode != 200) throw Exception('Failed to update skill');
+    return SkillModel.fromJson(jsonDecode(res.body));
   }
 
   Future<void> deleteSkill(String id) async {
-    await _delay;
-    _skills.removeWhere((s) => s.id == id);
+    final res = await http.delete(Uri.parse('$_base/skills/$id'));
+    if (res.statusCode != 200) throw Exception('Failed to delete skill');
   }
 
   Future<void> requestSkill({
     required String skillId,
     required String requesterId,
   }) async {
-    await _delay;
-    // Mock — replace with: POST /api/skills/:id/requests
+    await http.post(Uri.parse('$_base/skills/$skillId/request'));
   }
-
-  String generateId() => _uuid.v4();
 }
