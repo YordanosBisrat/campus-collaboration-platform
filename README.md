@@ -16,7 +16,7 @@ A mobile platform for university students to exchange skills and form study grou
 
 ---
 ## Demo
-
+https://www.loom.com/share/f7c9302272634024aa49b959ab4e480d
 ## Features
 
 - **Skill Exchange** — post skills you can teach, browse skills others offer, and send/receive skill requests (full CRUD)
